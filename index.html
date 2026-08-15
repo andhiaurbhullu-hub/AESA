@@ -1151,19 +1151,28 @@
 
     selectedSection.classList.add('active');
 
-    // Remove active from all navbar links
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.classList.remove('active');
-    });
+    // Remove active from ALL navigation links
+document.querySelectorAll('.nav-links a, .mobile-menu a').forEach(link => {
+    link.classList.remove('active');
+});
 
-    // Add active to selected navbar link
-    const activeLink = document.querySelector(
-        `.nav-links a[onclick*="${sectionId}"]`
-    );
+// Add active to desktop navbar link
+const desktopLink = document.querySelector(
+    `.nav-links a[onclick*="${sectionId}"]`
+);
 
-    if (activeLink) {
-        activeLink.classList.add('active');
-    }
+if (desktopLink) {
+    desktopLink.classList.add('active');
+}
+
+// Add active to mobile navbar link
+const mobileLink = document.querySelector(
+    `.mobile-menu a[data-section="${sectionId}"]`
+);
+
+if (mobileLink) {
+    mobileLink.classList.add('active');
+}
 
     // Add browser history
     if (!fromBackButton) {
