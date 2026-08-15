@@ -591,15 +591,15 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="javascript:void(0)" class="active" onclick="showSection('section-home')">Home</a>
-  <a href="javascript:void(0)" onclick="showSection('section-about')">About</a>
-  <a href="javascript:void(0)" onclick="showSection('section-team')">Team</a>
-  <a href="javascript:void(0)" onclick="showSection('section-events')">Events</a>
-  <a href="javascript:void(0)" onclick="showSection('section-activities')">Activities</a>
-  <a href="javascript:void(0)" onclick="showSection('section-achievements')">Achievements</a>
-  <a href="javascript:void(0)" onclick="showSection('section-gallery')">Gallery</a>
-  <a href="javascript:void(0)" onclick="showSection('section-resources')">Resources</a>
-  <a href="javascript:void(0)" class="mob-join" onclick="showSection('section-join')">Join Us</a>
+  <a href="#section-home" class="active" data-section="section-home">Home</a>
+  <a href="#section-about" data-section="section-about">About</a>
+  <a href="#section-team" data-section="section-team">Team</a>
+  <a href="#section-event" data-section="section-event">Events</a>
+  <a href="#section-activities" data-section="section-activities">Activities</a>
+  <a href="#section-achievements" data-section="section-achievements">Achievements</a>
+  <a href="#section-gallery" data-section="section-gallery">Gallery</a>
+  <a href="#section-resources" data-section="section-resources">Resources</a>
+  <a href="#section-join" data-section="section-join">Join Us</a>
 </div>
 
 <!-- HOME -->
@@ -1121,12 +1121,19 @@
     icon.className = open ? 'fas fa-times' : 'fas fa-bars';
   });
   // Close on link click
-  menu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      menu.classList.remove('open');
-      icon.className = 'fas fa-bars';
-    });
+  menu.querySelectorAll('a[data-section]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const sectionId = a.dataset.section;
+
+    showSection(sectionId);
+
+    menu.classList.remove('open');
+    icon.className = 'fas fa-bars';
   });
+});
+
   function showSection(sectionId, fromBackButton = false) {
 
     // Hide all sections
