@@ -248,60 +248,9 @@
     justify-content:center;
   }
 
-  .row-between{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:26px;
-  }
-
-  .remember{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    font-size:14px;
-    color:#1a2036;
-    cursor:pointer;
-    user-select:none;
-  }
-
-  .remember input{
-    appearance:none;
-    -webkit-appearance:none;
-    width:19px; height:19px;
-    border-radius:5px;
-    border:1.5px solid #c7cbdb;
-    background:#fff;
-    cursor:pointer;
-    position:relative;
-    flex-shrink:0;
-  }
-
-  .remember input:checked{
-    background:var(--blue-bright);
-    border-color:var(--blue-bright);
-  }
-
-  .remember input:checked::after{
-    content:"";
-    position:absolute;
-    left:5.5px; top:2px;
-    width:5px; height:9px;
-    border:solid #fff;
-    border-width:0 2px 2px 0;
-    transform:rotate(45deg);
-  }
-
-  .forgot{
-    font-size:13.5px;
-    color:var(--blue-bright);
-    text-decoration:none;
-    font-weight:500;
-  }
-  .forgot:hover{ text-decoration:underline; }
-
   .btn-login{
     width:100%;
+    margin-top:6px;
     padding:15px;
     border:none;
     border-radius:10px;
@@ -440,14 +389,6 @@
           </div>
         </div>
 
-        <div class="row-between">
-          <label class="remember">
-            <input type="checkbox" id="remember" checked>
-            Remember me
-          </label>
-          <a href="#" class="forgot" id="forgotLink">Forgot Password?</a>
-        </div>
-
         <button type="submit" class="btn-login" id="loginBtn">
           <span id="loginBtnText">LOGIN</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -473,7 +414,6 @@
   const errorMsg = document.getElementById('errorMsg');
   const loginBtn = document.getElementById('loginBtn');
   const loginBtnText = document.getElementById('loginBtnText');
-  const forgotLink = document.getElementById('forgotLink');
 
   toggleEye.addEventListener('click', () => {
     const isPassword = passwordInput.type === 'password';
@@ -526,10 +466,6 @@
     }, 900);
   });
 
-  forgotLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    alert('Hook this up to your password-reset flow.');
-  });
 </script>
 
 </body>
