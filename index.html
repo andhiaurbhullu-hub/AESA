@@ -633,47 +633,16 @@
   </div>
   <div class="events-grid">
     <div class="event-card">
-      <div class="event-img">
-        <img src="https://www.jouav.com/wp-content/uploads/2025/10/fpv-drone-operator.jpg" alt="FPV Drone Build Workshop">
-      </div>
-      <div class="event-body">
-        <span class="event-tag tag-workshop">Workshop</span>
-        <div class="event-title">FPV Drone Build Workshop</div>
-        <div class="event-meta">
-          <span><i class="fas fa-calendar"></i> 04 Sep 2026</span>
-          <span><i class="fas fa-map-marker-alt"></i> Seminar Hall</span>
-        </div>
-        <a href="#" class="btn-register">View Details</a>
-      </div>
+
+  <div class="event-body">
+
+    <div class="event-title">
+      Loading events...
     </div>
-    <div class="event-card">
-      <div class="event-img">
-        <img src="https://www.rcoeng.com/hs-fs/hubfs/aerospace-prototype-aircraft.jpg?width=1125&height=633&name=aerospace-prototype-aircraft.jpg" alt="FPV Drone Build Workshop">
-      </div>
-      <div class="event-body">
-        <span class="event-tag tag-seminar">Seminar</span>
-        <div class="event-title">Careers in Aerospace</div>
-        <div class="event-meta">
-          <span><i class="fas fa-calendar"></i> 19 Sep 2026</span>
-          <span><i class="fas fa-map-marker-alt"></i> Seminar Hall</span>
-        </div>
-        <a href="#" class="btn-register">Register Now</a>
-      </div>
-    </div>
-    <div class="event-card">
-      <div class="event-img">
-        <img src="https://edison365.com/?seraph_accel_gi=wp-content%2Fuploads%2F2022%2F03%2FHow-do-hackathons-work-1024x576.png&n=4KfUhxpi4uNZ9Lci8eTREQ" alt="FPV Drone Build Workshop">
-      </div>
-      <div class="event-body">
-        <span class="event-tag tag-competition">Competition</span>
-        <div class="event-title">Hackathon</div>
-        <div class="event-meta">
-          <span><i class="fas fa-calendar"></i> 30 Sept 2026</span>
-          <span><i class="fas fa-map-marker-alt"></i> ACPCE Campus</span>
-        </div>
-        <a href="#" class="btn-register">View Details</a>
-      </div>
-    </div>
+
+  </div>
+
+</div>
   </div>
 </section>
 
@@ -1211,6 +1180,120 @@ window.addEventListener("popstate", function(event) {
     );
 
     console.log("Supabase connected!");
+</script>
+
+      <script>
+    const SUPABASE_URL = "https://xngmfbsbpumekitugtbg.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_MzuAQsYmK0JIBEvHMuFvVg_7xh1a3KZ";
+
+    const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+    async function loadPublicEvents() {
+
+        const container = document.querySelector(".events-grid");
+
+        const { data, error } = await supabaseClient
+            .from("events")
+            .select("*")
+            .order("event_date", { ascending: true });
+
+        if (error) {
+            console.error("Error loading events:", error);
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div class="event-card">
+                    <div class="event-body">
+                        <div class="event-title">
+                            No upcoming events
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = "";
+
+        data.forEach(event => {
+
+            const card = document.createElement("div");
+
+            card.className = "event-card";
+
+            card.innerHTML = `
+                <div class="event-body">
+
+                    <span class="event-tag tag-workshop">
+                        Event
+                    </span>
+
+                    <div class="event-title">
+                        ${escapeHTML(event.title)}
+                    </div>
+
+                    <div class="event-meta">
+
+                        <span>
+                            <i class="fas fa-calendar"></i>
+                            ${formatDate(event.event_date)}
+                        </span>
+
+                        <span>
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${escapeHTML(event.location || "Location TBA")}
+                        </span>
+
+                    </div>
+
+                    <p style="
+                        font-size:13px;
+                        color:#64748b;
+                        line-height:1.5;
+                        margin-bottom:14px;
+                    ">
+                        ${escapeHTML(event.description || "")}
+                    </p>
+
+                    <a href="#" class="btn-register">
+                        View Details
+                    </a>
+
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+
+    function formatDate(dateString) {
+        const date = new Date(dateString + "T00:00:00");
+
+        return date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+    }
+
+
+    function escapeHTML(value) {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    loadPublicEvents();
 </script>
     </body>
 </html>
