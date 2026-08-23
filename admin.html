@@ -1,1028 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AESA Admin Login</title>
-
-    <!-- Same font style as the AESA website -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    >
-
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            --navy: #0a0f2c;
-            --blue: #1a56db;
-            --blue-light: #3b82f6;
-            --text: #1e293b;
-            --muted: #64748b;
-            --border: #e2e8f0;
-            --soft: #f8fafc;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
-            background: var(--soft);
-            min-height: 100vh;
-        }
-
-        /* =========================
-           PAGE
-        ========================= */
-
-        .login-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 20px;
-        }
-
-
-        /* =========================
-           MAIN CARD
-        ========================= */
-
-        .login-wrapper {
-            width: 100%;
-            max-width: 900px;
-
-            display: grid;
-            grid-template-columns: 0.9fr 1.1fr;
-
-            background: white;
-
-            border: 1px solid var(--border);
-            border-radius: 16px;
-
-            overflow: hidden;
-
-            box-shadow:
-                0 15px 40px rgba(10, 15, 44, 0.08);
-        }
-
-
-        /* =========================
-           LEFT BRAND PANEL
-        ========================= */
-
-        .brand-panel {
-            background: var(--navy);
-            color: white;
-
-            padding: 48px 38px;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-
-            min-height: 570px;
-        }
-
-        .brand-content {
-            margin-top: 10px;
-        }
-
-
-        /* BLANK LOGO SPACE */
-
-        .logo-placeholder {
-            width: 82px;
-            height: 82px;
-
-            border: 2px solid rgba(255,255,255,0.65);
-            border-radius: 50%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin-bottom: 25px;
-
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-
-        .brand-panel h1 {
-            font-size: 38px;
-            font-weight: 800;
-            letter-spacing: 1px;
-
-            margin-bottom: 8px;
-        }
-
-
-        .brand-line {
-            width: 42px;
-            height: 2px;
-
-            background: var(--blue-light);
-
-            margin-bottom: 12px;
-        }
-
-
-        .brand-subtitle {
-            font-size: 11px;
-            font-weight: 600;
-
-            letter-spacing: 2px;
-            text-transform: uppercase;
-
-            color: #cbd5e1;
-
-            line-height: 1.7;
-        }
-
-
-        .brand-description {
-            margin-top: 42px;
-
-            color: #94a3b8;
-
-            font-size: 13px;
-
-            line-height: 1.7;
-
-            max-width: 290px;
-        }
-
-
-        .brand-footer {
-            color: #64748b;
-
-            font-size: 11px;
-        }
-
-
-        /* =========================
-           RIGHT LOGIN PANEL
-        ========================= */
-
-        .login-panel {
-            padding: 55px 50px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: white;
-        }
-
-
-        .login-content {
-            width: 100%;
-            max-width: 390px;
-        }
-
-
-        .login-heading {
-            margin-bottom: 30px;
-        }
-
-
-        .login-heading h2 {
-            color: var(--navy);
-
-            font-size: 28px;
-
-            font-weight: 800;
-
-            margin-bottom: 8px;
-        }
-
-
-        .login-heading p {
-            color: var(--muted);
-
-            font-size: 13px;
-
-            line-height: 1.5;
-        }
-
-
-        /* =========================
-           ERROR
-        ========================= */
-
-        .error-message {
-            display: none;
-
-            background: #fef2f2;
-            color: #b91c1c;
-
-            border: 1px solid #fecaca;
-
-            padding: 11px 13px;
-
-            border-radius: 7px;
-
-            margin-bottom: 18px;
-
-            font-size: 12px;
-
-            line-height: 1.4;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-
-        /* =========================
-           FORM
-        ========================= */
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-
-        .form-group label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            color: var(--text);
-
-            font-size: 12px;
-
-            font-weight: 600;
-        }
-
-
-        .input-wrapper {
-            position: relative;
-        }
-
-
-        .input-wrapper i {
-            position: absolute;
-
-            left: 13px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            color: #94a3b8;
-
-            font-size: 14px;
-
-            pointer-events: none;
-        }
-
-
-        .input-wrapper input {
-            width: 100%;
-
-            padding: 12px 42px 12px 38px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 7px;
-
-            background: white;
-
-            color: var(--text);
-
-            font-family: inherit;
-
-            font-size: 13px;
-
-            outline: none;
-
-            transition: 0.2s;
-        }
-
-
-        .input-wrapper input::placeholder {
-            color: #94a3b8;
-        }
-
-
-        .input-wrapper input:focus {
-            border-color: var(--blue-light);
-
-            box-shadow:
-                0 0 0 3px rgba(59,130,246,0.10);
-        }
-
-
-        /* PASSWORD EYE */
-
-        .password-toggle {
-            position: absolute;
-
-            right: 12px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            border: none;
-
-            background: transparent;
-
-            color: #94a3b8;
-
-            cursor: pointer;
-
-            padding: 4px;
-        }
-
-
-        .password-toggle:hover {
-            color: var(--blue);
-        }
-
-
-        /* =========================
-           OPTIONS
-        ========================= */
-
-        .form-options {
-            display: flex;
-
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 22px;
-
-            font-size: 12px;
-        }
-
-
-        .remember {
-            display: flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            color: var(--muted);
-
-            cursor: pointer;
-        }
-
-
-        .remember input {
-            accent-color: var(--blue);
-        }
-
-
-        .forgot {
-            color: var(--blue);
-
-            font-weight: 600;
-
-            text-decoration: none;
-        }
-
-
-        .forgot:hover {
-            text-decoration: underline;
-        }
-
-
-        /* =========================
-           LOGIN BUTTON
-        ========================= */
-
-        .login-button {
-            width: 100%;
-
-            border: none;
-
-            background: var(--blue);
-
-            color: white;
-
-            padding: 12px;
-
-            border-radius: 7px;
-
-            font-family: inherit;
-
-            font-size: 14px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 8px;
-
-            transition: 0.2s;
-        }
-
-
-        .login-button:hover {
-            background: #1648c0;
-        }
-
-
-        .login-button:disabled {
-            opacity: 0.65;
-
-            cursor: not-allowed;
-        }
-
-
-        /* =========================
-           BOTTOM INFO
-        ========================= */
-
-        .secure-note {
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            gap: 7px;
-
-            margin-top: 22px;
-
-            padding-top: 18px;
-
-            border-top: 1px solid var(--border);
-
-            color: #94a3b8;
-
-            font-size: 11px;
-        }
-
-
-        .secure-note i {
-            color: var(--blue);
-        }
-
-
-        /* =========================
-           MOBILE
-        ========================= */
-
-        @media (max-width: 760px) {
-
-            .login-page {
-                padding: 15px;
-            }
-
-            .login-wrapper {
-                grid-template-columns: 1fr;
-            }
-
-            .brand-panel {
-                min-height: auto;
-
-                padding: 30px 25px;
-            }
-
-            .brand-description {
-                margin-top: 25px;
-            }
-
-            .brand-footer {
-                margin-top: 30px;
-            }
-
-            .login-panel {
-                padding: 35px 25px;
-            }
-
-        }
-
-
-        @media (max-width: 420px) {
-
-            .brand-panel h1 {
-                font-size: 32px;
-            }
-
-            .login-heading h2 {
-                font-size: 24px;
-            }
-
-            .form-options {
-                flex-direction: column;
-
-                align-items: flex-start;
-
-                gap: 10px;
-            }
-
-        }
-
-    </style>
+<meta charset="UTF-8">
+<title>AESA Admin Portal — Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy-deep:#0a1230;
+    --navy-mid:#101c45;
+    --blue-accent:#2952e8;
+    --blue-bright:#3b63f5;
+    --ink:#1a2036;
+    --muted:#8891a8;
+    --border:#e3e6ee;
+    --bg-right:#f4f5f9;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+  }
+
+  .page{
+    min-height:100vh;
+    display:flex;
+    background:var(--bg-right);
+  }
+
+  /* ---------- LEFT PANEL ---------- */
+  .left{
+    position:relative;
+    width:38%;
+    min-width:340px;
+    background:
+      radial-gradient(ellipse at 30% 0%, rgba(59,99,245,0.25), transparent 60%),
+      linear-gradient(160deg, var(--navy-deep) 0%, var(--navy-mid) 55%, #060a1c 100%);
+    color:#fff;
+    padding:56px 48px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+    clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%);
+  }
+
+  .left::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg, rgba(6,10,28,0.1) 0%, rgba(6,10,28,0.75) 100%),
+      url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Cg fill="none" stroke="%233b63f5" stroke-opacity="0.15" stroke-width="1"%3E%3Cpath d="M20 260 L200 120 L380 40"/%3E%3C/g%3E%3C/svg%3E');
+    background-size:cover;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .plane-silhouette{
+    position:absolute;
+    bottom:-40px;
+    left:-40px;
+    width:110%;
+    opacity:0.5;
+    z-index:0;
+    filter: drop-shadow(0 0 40px rgba(59,99,245,0.15));
+  }
+
+  .left > *{ position:relative; z-index:1; }
+
+  .brand-top{ display:flex; flex-direction:column; align-items:flex-start; gap:22px; }
+
+  .logo-circle{
+    width:120px; height:120px;
+    border:2.5px solid rgba(255,255,255,0.9);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .logo-circle svg{ width:56px; height:56px; }
+
+  .brand-name{
+    font-family:'Poppins',sans-serif;
+    font-weight:800;
+    font-size:44px;
+    letter-spacing:2px;
+    line-height:1;
+    margin:0;
+  }
+
+  .brand-sub{
+    font-family:'Poppins',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:3px;
+    color:#dfe4f7;
+    margin-top:4px;
+  }
+
+  .brand-sub .line{
+    display:inline-block;
+    width:38px;
+    height:2px;
+    background:var(--blue-bright);
+    margin:0 8px 3px 0;
+    vertical-align:middle;
+  }
+
+  .brand-sub2{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:4px;
+    color:#dfe4f7;
+    margin-top:2px;
+  }
+
+  .divider-short{
+    width:46px; height:3px;
+    background:var(--blue-bright);
+    margin-top:18px;
+    border-radius:2px;
+  }
+
+  .tagline{
+    font-family:'Poppins',sans-serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 14px 0;
+  }
+
+  .desc{
+    font-size:14.5px;
+    line-height:1.6;
+    color:#c7cde3;
+    max-width:300px;
+    margin:0;
+  }
+
+  .brand-mid{ margin-top:60px; }
+
+  .footer-note{
+    font-size:12.5px;
+    color:#8891b3;
+  }
+
+  /* ---------- RIGHT PANEL ---------- */
+  .right{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+  }
+
+  .card{
+    width:100%;
+    max-width:460px;
+    background:#fff;
+    border-radius:18px;
+    box-shadow:0 20px 60px rgba(20,30,70,0.10), 0 2px 8px rgba(20,30,70,0.06);
+    padding:44px 44px 36px;
+    text-align:center;
+  }
+
+  .card h1{
+    font-family:'Poppins',sans-serif;
+    font-size:29px;
+    font-weight:800;
+    color:#10163a;
+    margin:0 0 6px 0;
+  }
+
+  .card .portal-label{
+    font-size:16px;
+    color:#333c5c;
+    margin:0 0 6px 0;
+    font-weight:500;
+  }
+
+  .portal-underline{
+    width:44px; height:3px;
+    background:var(--blue-bright);
+    margin:8px auto 26px;
+    border-radius:2px;
+  }
+
+  .field{ text-align:left; margin-bottom:20px; }
+
+  .field label{
+    display:block;
+    font-size:13.5px;
+    font-weight:600;
+    color:#1a2036;
+    margin-bottom:8px;
+  }
+
+  .input-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+
+  .input-wrap svg{
+    position:absolute;
+    left:16px;
+    width:18px; height:18px;
+    color:#9aa3ba;
+    pointer-events:none;
+  }
+
+  .input-wrap input{
+    width:100%;
+    padding:14px 16px 14px 46px;
+    border-radius:10px;
+    border:1.5px solid var(--border);
+    font-size:14.5px;
+    font-family:'Inter',sans-serif;
+    color:#1a2036;
+    background:#fbfbfd;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+
+  .input-wrap input::placeholder{ color:#9aa3ba; }
+
+  .input-wrap input:focus{
+    border-color:var(--blue-bright);
+    background:#fff;
+    box-shadow:0 0 0 4px rgba(59,99,245,0.12);
+  }
+
+  .toggle-eye{
+    position:absolute;
+    right:16px;
+    width:20px; height:20px;
+    color:#9aa3ba;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:26px;
+  }
+
+  .remember{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:14px;
+    color:#1a2036;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .remember input{
+    appearance:none;
+    -webkit-appearance:none;
+    width:19px; height:19px;
+    border-radius:5px;
+    border:1.5px solid #c7cbdb;
+    background:#fff;
+    cursor:pointer;
+    position:relative;
+    flex-shrink:0;
+  }
+
+  .remember input:checked{
+    background:var(--blue-bright);
+    border-color:var(--blue-bright);
+  }
+
+  .remember input:checked::after{
+    content:"";
+    position:absolute;
+    left:5.5px; top:2px;
+    width:5px; height:9px;
+    border:solid #fff;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+
+  .forgot{
+    font-size:13.5px;
+    color:var(--blue-bright);
+    text-decoration:none;
+    font-weight:500;
+  }
+  .forgot:hover{ text-decoration:underline; }
+
+  .btn-login{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg, var(--blue-accent), var(--blue-bright));
+    color:#fff;
+    font-size:15.5px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+    box-shadow:0 10px 24px rgba(41,82,232,0.30);
+  }
+
+  .btn-login:hover{ transform:translateY(-1px); box-shadow:0 14px 30px rgba(41,82,232,0.38); }
+  .btn-login:active{ transform:translateY(0); }
+  .btn-login:disabled{ opacity:0.7; cursor:not-allowed; transform:none; }
+
+  .btn-login svg{ width:17px; height:17px; }
+
+  .divider-line{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:26px 0 18px;
+    color:#a7adc2;
+    font-size:11.5px;
+    font-weight:600;
+    letter-spacing:1.5px;
+  }
+  .divider-line::before, .divider-line::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#e6e8f0;
+  }
+  .divider-line svg{ width:14px; height:14px; }
+
+  .footer-label{
+    font-size:13px;
+    color:#9aa3ba;
+    margin:0;
+  }
+
+  .error-msg{
+    display:none;
+    background:#fdeceb;
+    color:#c0392b;
+    border:1px solid #f5c6c2;
+    border-radius:8px;
+    padding:10px 14px;
+    font-size:13px;
+    text-align:left;
+    margin-bottom:18px;
+  }
+  .error-msg.show{ display:block; }
+
+  @media (max-width: 860px){
+    .page{ flex-direction:column; }
+    .left{
+      width:100%;
+      clip-path:none;
+      padding:36px 28px;
+      min-height:280px;
+    }
+    .plane-silhouette{ display:none; }
+    .brand-mid{ margin-top:28px; }
+    .right{ padding:32px 16px 60px; }
+    .card{ padding:32px 24px 28px; }
+  }
+
+  :focus-visible{ outline:2px solid var(--blue-bright); outline-offset:2px; }
+</style>
 </head>
-
-
 <body>
 
-
-<div class="login-page">
-
-    <div class="login-wrapper">
-
-
-        <!-- =========================
-             LEFT BRAND
-        ========================== -->
-
-        <section class="brand-panel">
-
-            <div class="brand-content">
-
-                <!--
-                    BLANK LOGO AREA
-
-                    Put your AESA logo inside this
-                    circle later if you want.
-                -->
-
-                <div class="logo-placeholder">
-                    YOUR LOGO
-                </div>
-
-
-                <h1>AESA</h1>
-
-                <div class="brand-line"></div>
-
-                <div class="brand-subtitle">
-                    Aeronautical Engineering<br>
-                    Student Association
-                </div>
-
-
-                <p class="brand-description">
-                    Manage the AESA website,
-                    events, notices, gallery,
-                    achievements and resources
-                    from one secure administration portal.
-                </p>
-
-            </div>
-
-
-            <div class="brand-footer">
-                AESA Website Administration
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             LOGIN
-        ========================== -->
-
-        <section class="login-panel">
-
-            <div class="login-content">
-
-
-                <div class="login-heading">
-
-                    <h2>
-                        Welcome Back
-                    </h2>
-
-                    <p>
-                        Sign in to manage the AESA website.
-                    </p>
-
-                </div>
-
-
-                <div
-                    class="error-message"
-                    id="errorMessage"
-                ></div>
-
-
-                <form id="loginForm">
-
-
-                    <!-- EMAIL -->
-
-                    <div class="form-group">
-
-                        <label for="email">
-                            Email Address
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <i class="fa-solid fa-envelope"></i>
-
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="Enter your email"
-                                autocomplete="username"
-                                required
-                            >
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- PASSWORD -->
-
-                    <div class="form-group">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <i class="fa-solid fa-lock"></i>
-
-                            <input
-                                type="password"
-                                id="password"
-                                placeholder="Enter your password"
-                                autocomplete="current-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                id="passwordToggle"
-                                aria-label="Show password"
-                            >
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- OPTIONS -->
-
-                    <div class="form-options">
-
-                        <label class="remember">
-
-                            <input
-                                type="checkbox"
-                                id="remember"
-                                checked
-                            >
-
-                            Remember me
-
-                        </label>
-
-
-                        <a
-                            href="#"
-                            class="forgot"
-                            id="forgotPassword"
-                        >
-                            Forgot password?
-                        </a>
-
-                    </div>
-
-
-
-                    <!-- LOGIN -->
-
-                    <button
-                        type="submit"
-                        class="login-button"
-                        id="loginButton"
-                    >
-
-                        <i class="fa-solid fa-right-to-bracket"></i>
-
-                        <span id="loginText">
-                            Login
-                        </span>
-
-                    </button>
-
-
-                </form>
-
-
-                <div class="secure-note">
-
-                    <i class="fa-solid fa-shield-halved"></i>
-
-                    Secure AESA administration
-
-                </div>
-
-            </div>
-
-        </section>
-
-
+<div class="page">
+
+  <!-- LEFT BRAND PANEL -->
+  <div class="left">
+    <svg class="plane-silhouette" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#0d1638" opacity="0.9" d="M40 320 L220 240 L260 150 L285 145 L270 235 L420 200 L440 215 L300 260 L340 320 L315 325 L265 275 L200 300 L210 330 L190 335 L165 300 L60 335 Z"/>
+    </svg>
+
+    <div class="brand-top">
+      <div class="logo-circle" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+          <path d="M2 16l7-2 5.5-7.5c.5-.7 1.5-.9 2.2-.4.7.5.9 1.5.4 2.2L13 15l6 1-2 2-5-1-3 3-2-.5.5-2-3-3z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-name">AESA</h1>
+        <div class="brand-sub"><span class="line"></span>AERONAUTICAL ENGINEERING</div>
+        <div class="brand-sub2">STUDENT ASSOCIATION</div>
+        <div class="divider-short"></div>
+      </div>
     </div>
+
+    <div class="brand-mid">
+      <p class="tagline">Aim High. Build Beyond.</p>
+      <p class="desc">AESA is a community of passionate aeronautical enthusiasts dedicated to learning, innovation and excellence.</p>
+    </div>
+
+    <div class="footer-note">© 2024 AESA. All rights reserved.</div>
+  </div>
+
+  <!-- RIGHT LOGIN CARD -->
+  <div class="right">
+    <div class="card">
+      <h1>Welcome Back!</h1>
+      <p class="portal-label">Admin Portal</p>
+      <div class="portal-underline"></div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">Email Address</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18v12H3z" stroke-linejoin="round"/><path d="M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3" stroke-linecap="round"/></svg>
+            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="toggle-eye" id="toggleEye" aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox" id="remember" checked>
+            Remember me
+          </label>
+          <a href="#" class="forgot" id="forgotLink">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn">
+          <span id="loginBtnText">LOGIN</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+
+      <div class="divider-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+        SECURE LOGIN
+      </div>
+
+      <p class="footer-label">AESA Website Administration</p>
+    </div>
+  </div>
 
 </div>
 
-
-
 <script>
+  const form = document.getElementById('loginForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const toggleEye = document.getElementById('toggleEye');
+  const errorMsg = document.getElementById('errorMsg');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginBtnText = document.getElementById('loginBtnText');
+  const forgotLink = document.getElementById('forgotLink');
 
+  toggleEye.addEventListener('click', () => {
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
+    toggleEye.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    toggleEye.innerHTML = isPassword
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.6 21.6 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.6 21.6 0 01-3.22 4.4M14.12 14.12a3 3 0 11-4.24-4.24" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1l22 22" stroke-linecap="round"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+  });
 
-/* =========================
-   SUPABASE CONNECTION
-========================= */
+  function showError(message){
+    errorMsg.textContent = message;
+    errorMsg.classList.add('show');
+  }
 
-const SUPABASE_URL =
-    "PASTE_YOUR_PROJECT_URL_HERE";
+  function clearError(){
+    errorMsg.classList.remove('show');
+    errorMsg.textContent = '';
+  }
 
+  [emailInput, passwordInput].forEach(input => {
+    input.addEventListener('input', clearError);
+  });
 
-const SUPABASE_PUBLISHABLE_KEY =
-    "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearError();
 
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
 
-const supabaseClient =
-    supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
-
-
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const loginForm =
-    document.getElementById("loginForm");
-
-
-const emailInput =
-    document.getElementById("email");
-
-
-const passwordInput =
-    document.getElementById("password");
-
-
-const passwordToggle =
-    document.getElementById("passwordToggle");
-
-
-const loginButton =
-    document.getElementById("loginButton");
-
-
-const loginText =
-    document.getElementById("loginText");
-
-
-const errorMessage =
-    document.getElementById("errorMessage");
-
-
-const forgotPassword =
-    document.getElementById("forgotPassword");
-
-
-
-/* =========================
-   ERROR MESSAGE
-========================= */
-
-function showError(message) {
-
-    errorMessage.textContent =
-        message;
-
-    errorMessage.classList.add("show");
-
-}
-
-
-function clearError() {
-
-    errorMessage.textContent = "";
-
-    errorMessage.classList.remove("show");
-
-}
-
-
-
-/* =========================
-   PASSWORD SHOW/HIDE
-========================= */
-
-passwordToggle.addEventListener(
-    "click",
-    function() {
-
-        const isHidden =
-            passwordInput.type === "password";
-
-
-        passwordInput.type =
-            isHidden
-                ? "text"
-                : "password";
-
-
-        passwordToggle.innerHTML =
-            isHidden
-                ? '<i class="fa-solid fa-eye-slash"></i>'
-                : '<i class="fa-solid fa-eye"></i>';
-
+    if (!email || !password){
+      showError('Please enter both email and password.');
+      return;
     }
-);
-
-
-
-/* =========================
-   LOGIN
-========================= */
-
-loginForm.addEventListener(
-    "submit",
-    async function(event) {
-
-        event.preventDefault();
-
-        clearError();
-
-
-        const email =
-            emailInput.value.trim();
-
-
-        const password =
-            passwordInput.value;
-
-
-        if (!email || !password) {
-
-            showError(
-                "Please enter your email and password."
-            );
-
-            return;
-
-        }
-
-
-        loginButton.disabled = true;
-
-        loginText.textContent =
-            "Signing in...";
-
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth
-            .signInWithPassword({
-
-                email: email,
-
-                password: password
-
-            });
-
-
-        if (error) {
-
-            loginButton.disabled = false;
-
-            loginText.textContent =
-                "Login";
-
-            showError(
-                "Invalid email or password."
-            );
-
-            return;
-
-        }
-
-
-        if (data.session) {
-
-            loginText.textContent =
-                "Login successful!";
-
-            setTimeout(
-                function() {
-
-                    window.location.href =
-                        "dashboard.html";
-
-                },
-                500
-            );
-
-        }
-
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)){
+      showError('Please enter a valid email address.');
+      return;
     }
-);
 
+    // Simulate a login request — wire this up to your real auth endpoint.
+    loginBtn.disabled = true;
+    loginBtnText.textContent = 'SIGNING IN...';
 
+    setTimeout(() => {
+      loginBtn.disabled = false;
+      loginBtnText.textContent = 'LOGIN';
+      showError('Invalid email or password. (Demo — connect this form to your backend.)');
+    }, 900);
+  });
 
-/* =========================
-   FORGOT PASSWORD
-========================= */
-
-forgotPassword.addEventListener(
-    "click",
-    async function(event) {
-
-        event.preventDefault();
-
-        clearError();
-
-
-        const email =
-            emailInput.value.trim();
-
-
-        if (!email) {
-
-            showError(
-                "Enter your email address first."
-            );
-
-            emailInput.focus();
-
-            return;
-
-        }
-
-
-        const {
-            error
-        } =
-            await supabaseClient.auth
-            .resetPasswordForEmail(
-                email,
-                {
-                    redirectTo:
-                        window.location.origin +
-                        window.location.pathname
-                }
-            );
-
-
-        if (error) {
-
-            showError(
-                error.message
-            );
-
-            return;
-
-        }
-
-
-        alert(
-            "Password reset instructions have been sent to your email."
-        );
-
-    }
-);
-
-
-
+  forgotLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    alert('Hook this up to your password-reset flow.');
+  });
 </script>
 
 </body>
