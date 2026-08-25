@@ -76,7 +76,13 @@
 
   .left > *{ position:relative; z-index:1; }
 
-  .brand-top{ display:flex; flex-direction:column; align-items:flex-start; gap:22px; }
+  .brand-top{
+      position:absolute;
+      top:50%;
+      left:clamp(24px,3.5vw,48px);
+      transform:translateY(-50%);
+      margin:0;
+  }
 
   .logo-circle{
     width:clamp(70px,9vh,100px); height:clamp(70px,9vh,100px);
