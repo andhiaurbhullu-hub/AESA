@@ -83,17 +83,23 @@
     transform:translateY(-50%);
     margin:0;
     width:320px;
+    text-align:center;
   }
   
   .brand-mid{
-      margin-top:28px;
+    margin-top:32px;
+    text-align:left;
   }
   
   .logo-circle{
-    width:clamp(70px,9vh,100px); height:clamp(70px,9vh,100px);
+    width:clamp(70px,9vh,100px);
+    height:clamp(70px,9vh,100px);
     border:2.5px solid rgba(255,255,255,0.9);
     border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 18px;
   }
 
   .logo-circle img{
@@ -110,6 +116,7 @@
     letter-spacing:2px;
     line-height:1;
     margin:0;
+    text-align:center;
   }
 
   .brand-sub{
@@ -119,29 +126,30 @@
     letter-spacing:3px;
     color:#dfe4f7;
     margin-top:4px;
+    text-align:center;
   }
 
-  .brand-sub .line{
-    display:inline-block;
-    width:38px;
+  .brand-divider{
+    width:180px;
     height:2px;
     background:var(--blue-bright);
-    margin:0 8px 3px 0;
-    vertical-align:middle;
-  }
+    margin:12px auto;
+    border-radius:2px;
+}
 
   .brand-sub2{
     font-size:12.5px;
     font-weight:600;
     letter-spacing:4px;
     color:#dfe4f7;
-    margin-top:2px;
+    margin-top:6px;
+    text-align:center;
   }
 
   .divider-short{
-    width:46px; height:3px;
+    width:90px; height:3px;
     background:var(--blue-bright);
-    margin-top:18px;
+    margin:18px auto 0;
     border-radius:2px;
   }
 
@@ -340,7 +348,19 @@
       padding:32px 24px;
     }
     .plane-silhouette{ display:none; }
-    .brand-mid{ margin-top:24px; }
+    .brand-top{
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    width:100%;
+    text-align:center;
+    }
+    
+    .brand-mid{
+        margin-top:28px;
+        text-align:left;
+    }
     .right{ height:auto; padding:28px 16px 48px; }
     .card{ padding:28px 22px 24px; }
   }
@@ -363,11 +383,18 @@
           <img src="aesalogo.jpg.jpeg" alt="AESA Logo">
       </div>
       <div>
-        <h1 class="brand-name mb-5">AESA</h1>
-        <div class="brand-sub"><span class="line"></span>AERONAUTICAL ENGINEERING</div>
-        <div class="brand-sub2">STUDENT ASSOCIATION</div>
-        <div class="divider-short"></div>
+        <h1 class="brand-name">AESA</h1>
+        <div class="brand-divider"></div>
+
+      <div class="brand-sub">
+          AERONAUTICAL ENGINEERING
       </div>
+      
+      <div class="brand-sub2">
+          STUDENT ASSOCIATION
+      </div>
+      
+      <div class="brand-divider"></div>
         <div class="brand-mid">
           <p class="tagline">Aim High. Build Beyond.</p>
           <p class="desc">AESA is a community of passionate aeronautical enthusiasts dedicated to learning, innovation and excellence.</p>
