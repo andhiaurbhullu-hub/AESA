@@ -480,7 +480,7 @@ const supabaseClient = window.supabase.createClient(
   const loginBtn = document.getElementById('loginBtn');
   const loginBtnText = document.getElementById('loginBtnText');
 
-  toggleEye.addEventListener('click', () => {
+  form.addEventListener('submit', async (e) => {
     const isPassword = passwordInput.type === 'password';
     passwordInput.type = isPassword ? 'text' : 'password';
     toggleEye.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
@@ -519,6 +519,30 @@ const supabaseClient = window.supabase.createClient(
       showError('Please enter a valid email address.');
       return;
     }
+        loginBtn.disabled = true;
+    loginBtnText.textContent = 'SIGNING IN...';
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (error) {
+      loginBtn.disabled = false;
+      loginBtnText.textContent = 'LOGIN';
+      showError('Invalid email or password.');
+      return;
+    }
+
+    if (data && data.session) {
+      loginBtnText.textContent = 'SUCCESS';
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 400);
+    }
+
+  });
 </script>
 
 </body>
