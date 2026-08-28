@@ -481,14 +481,16 @@ const supabaseClient = window.supabase.createClient(
   const loginBtn = document.getElementById('loginBtn');
   const loginBtnText = document.getElementById('loginBtnText');
 
-  form.addEventListener('submit', async (e) => {
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-    toggleEye.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-    toggleEye.innerHTML = isPassword
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.6 21.6 0 015.06-6.06M9.9 4.24A10.94 10.94 0 0112 4c7 0 11 8 11 8a21.6 21.6 0 01-3.22 4.4M14.12 14.12a3 3 0 11-4.24-4.24" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1l22 22" stroke-linecap="round"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
-  });
+  toggleEye.addEventListener('click', () => {
+  const isPassword = passwordInput.type === 'password';
+
+  passwordInput.type = isPassword ? 'text' : 'password';
+
+  toggleEye.setAttribute(
+    'aria-label',
+    isPassword ? 'Hide password' : 'Show password'
+  );
+});;
 
   function showError(message){
     errorMsg.textContent = message;
