@@ -465,6 +465,13 @@
 </div>
 
 <script>
+  const SUPABASE_URL = 'https://xngmfbsbpumekitugtbg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_MzuAQsYmK0JIBEvHMuFvVg_7xh1a3KZ';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
   const form = document.getElementById('loginForm');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
@@ -512,18 +519,6 @@
       showError('Please enter a valid email address.');
       return;
     }
-
-    // Simulate a login request — wire this up to your real auth endpoint.
-    loginBtn.disabled = true;
-    loginBtnText.textContent = 'SIGNING IN...';
-
-    setTimeout(() => {
-      loginBtn.disabled = false;
-      loginBtnText.textContent = 'LOGIN';
-      showError('Invalid email or password. (Demo — connect this form to your backend.)');
-    }, 900);
-  });
-
 </script>
 
 </body>
