@@ -1285,15 +1285,7 @@ async function loadAllData(){
     return;
   }
 
-  data.events = (events || []).map(e => ({
-    id: e.id,
-    name: e.title,
-    date: e.event_date,
-    time: e.event_time,
-    location: e.location,
-    description: e.description,
-    image_url: e.image_url
-  }));
+  data.events = events || [];
 
   renderAll();
 }
