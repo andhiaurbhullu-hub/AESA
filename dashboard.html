@@ -714,6 +714,8 @@ const SUPABASE_URL =
 
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_MzuAQsYmK0JIBEvHMuFvVg_7xh1a3KZ";
+  
+const STORAGE_BUCKET = "aesa-files";
 
 const supabaseClient =
     supabase.createClient(
@@ -855,65 +857,186 @@ function renderNotices(){
 
 /* ============ RENDER: GALLERY ============ */
 function renderGallery(){
-  const grid = document.getElementById('gallery-grid');
-  if(!data.gallery.length){ grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">No photos yet. Click "Upload Photos" to add your first one.</div>`; }
-  else{
-    grid.innerHTML = data.gallery.map(g=>{
-      const hasImg = g.photo && g.photo.dataUrl;
-      const bgStyle = hasImg
-        ? `background-image:url('${g.photo.dataUrl}');background-size:cover;background-position:center;`
-        : `background:${g.color||'#5b7fd4'};`;
-      const placeholderIcon = hasImg ? '' : `<svg style="position:absolute;inset:0;margin:auto;width:34px;height:34px;opacity:.45" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><rect x="3" y="4" width="18" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-9 9"/></svg>`;
-      const caption = g.title ? `${g.title} · ${fmtDate(g.date)}` : fmtDate(g.date);
-      return `
-      <div class="gallery-item" style="${bgStyle}" onclick="openModal('photo',${g.id})">
-        ${placeholderIcon}
-        <div class="gallery-date"><span>${caption}</span><button onclick="event.stopPropagation();removeItem('gallery',${g.id})">✕</button></div>
-      </div>`;
+
+    const grid = document.getElementById('gallery-grid');
+
+    if(!data.gallery.length){
+
+        grid.innerHTML = `
+            <div class="empty-state"
+                 style="grid-column:1/-1">
+                No photos yet. Click "Upload Photos" to add your first one.
+            </div>
+        `;
+
+        return;
+    }
+
+    grid.innerHTML = data.gallery.map(g => {
+
+        const image = g.photo_url || '';
+
+        return `
+            <div class="gallery-item"
+                 style="background-image:url('${image}');
+                        background-size:cover;
+                        background-position:center;">
+
+                <div class="gallery-date">
+
+                    <span>
+                        ${escapeHtml(g.title)}
+                        ·
+                        ${fmtDate(g.date)}
+                    </span>
+
+                    <button
+                        onclick="event.stopPropagation();
+                        removeItem('gallery',${g.id})">
+                        ✕
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
     }).join('');
-  }
-  document.getElementById('pg-gallery-label').textContent = `Showing 1 to ${data.gallery.length} of ${data.gallery.length} photos`;
+
+    document.getElementById('pg-gallery-label').textContent =
+        `Showing 1 to ${data.gallery.length} of ${data.gallery.length} photos`;
 }
 
 /* ============ RENDER: ACHIEVEMENTS ============ */
 function renderAchievements(){
-  const tbody = document.getElementById('tbl-achievements');
-  if(!data.achievements.length){ tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">No achievements yet.</div></td></tr>`; }
-  else{
-    tbody.innerHTML = data.achievements.map((a,i)=>`
-      <tr>
-        <td>${i+1}</td>
-        <td style="font-weight:600;color:#0f172a">${a.title}</td>
-        <td>${a.desc}</td>
-        <td>${fmtDate(a.date)}</td>
-        <td>
-          <button class="icon-btn edit" onclick="openModal('achievement',${a.id})">${editSvg()}</button>
-          <button class="icon-btn del" onclick="removeItem('achievements',${a.id})">${delSvg()}</button>
-        </td>
-      </tr>`).join('');
-  }
-  document.getElementById('pg-achievements-label').textContent = `Showing 1 to ${data.achievements.length} of ${data.achievements.length} achievements`;
+
+    const tbody =
+        document.getElementById('tbl-achievements');
+
+    if(!data.achievements.length){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        No achievements yet.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    }else{
+
+        tbody.innerHTML =
+            data.achievements.map((a,i) => `
+
+                <tr>
+
+                    <td>${i+1}</td>
+
+                    <td style="font-weight:600;color:#0f172a">
+                        ${escapeHtml(a.title)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(a.desc)}
+                    </td>
+
+                    <td>
+                        ${fmtDate(a.date)}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="icon-btn edit"
+                            onclick="openModal('achievement',${a.id})">
+                            ${editSvg()}
+                        </button>
+
+                        <button
+                            class="icon-btn del"
+                            onclick="removeItem('achievements',${a.id})">
+                            ${delSvg()}
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `).join('');
+    }
+
+    document.getElementById('pg-achievements-label').textContent =
+        `Showing 1 to ${data.achievements.length} of ${data.achievements.length} achievements`;
 }
 
 /* ============ RENDER: RESOURCES ============ */
 function renderResources(){
-  const tbody = document.getElementById('tbl-resources');
-  if(!data.resources.length){ tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">No resources yet.</div></td></tr>`; }
-  else{
-    tbody.innerHTML = data.resources.map((r,i)=>`
-      <tr>
-        <td>${i+1}</td>
-        <td style="font-weight:600;color:#0f172a">${r.title}</td>
-        <td>${r.type}</td>
-        <td><span style="color:#ef4444;font-weight:700;font-size:11px">${r.file && r.file.name ? r.file.name : r.type}</span></td>
-        <td>${fmtDate(r.date)}</td>
-        <td>
-          <button class="icon-btn dl" onclick="showToast('Downloading ${r.title}…')">${dlSvg()}</button>
-          <button class="icon-btn del" onclick="removeItem('resources',${r.id})">${delSvg()}</button>
-        </td>
-      </tr>`).join('');
-  }
-  document.getElementById('pg-resources-label').textContent = `Showing 1 to ${data.resources.length} of ${data.resources.length} resources`;
+
+    const tbody =
+        document.getElementById('tbl-resources');
+
+    if(!data.resources.length){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6">
+                    <div class="empty-state">
+                        No resources yet.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+    }else{
+
+        tbody.innerHTML =
+            data.resources.map((r,i) => `
+
+                <tr>
+
+                    <td>${i+1}</td>
+
+                    <td style="font-weight:600;color:#0f172a">
+                        ${escapeHtml(r.title)}
+                    </td>
+
+                    <td>${escapeHtml(r.type)}</td>
+
+                    <td>
+                        <span style="color:#ef4444;font-weight:700;font-size:11px">
+                            ${escapeHtml(r.file_name || r.type)}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${fmtDate(r.date)}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="icon-btn dl"
+                            onclick="window.open('${r.file_url}','_blank')">
+                            ${dlSvg()}
+                        </button>
+
+                        <button
+                            class="icon-btn del"
+                            onclick="removeItem('resources',${r.id})">
+                            ${delSvg()}
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `).join('');
+    }
+
+    document.getElementById('pg-resources-label').textContent =
+        `Showing 1 to ${data.resources.length} of ${data.resources.length} resources`;
 }
 function showToast(message){
   alert(message);
@@ -1140,165 +1263,409 @@ function initDropzone(key){
 }
 
 function handleFile(key, file){
-  const isImage = file.type.startsWith('image/');
-  const dzInner = document.getElementById('dzinner-'+key);
-  const dz = document.getElementById('dz-'+key);
-  if(dz) dz.classList.remove('error');
-  if(isImage){
+
+    const dzInner = document.getElementById('dzinner-' + key);
+    const dz = document.getElementById('dz-' + key);
+
+    if(dz) dz.classList.remove('error');
+
+    if(file.size > 20 * 1024 * 1024){
+        showToast('File is larger than 20MB');
+        return;
+    }
+
     const reader = new FileReader();
-    reader.onload = ()=>{
-      modalFiles[key] = {name:file.name, dataUrl:reader.result};
-      dzInner.innerHTML = `<img class="dz-preview" src="${reader.result}"><button type="button" class="dz-remove" onclick="event.stopPropagation();clearDropzone('${key}')">✕</button>`;
+
+    reader.onload = () => {
+
+        modalFiles[key] = {
+            name: file.name,
+            type: file.type,
+            dataUrl: reader.result
+        };
+
+        if(file.type.startsWith('image/')){
+
+            dzInner.innerHTML = `
+                <img class="dz-preview" src="${reader.result}">
+                <button type="button"
+                    class="dz-remove"
+                    onclick="event.stopPropagation();clearDropzone('${key}')">
+                    ✕
+                </button>
+            `;
+
+        } else {
+
+            dzInner.innerHTML = `
+                ${fileIconSvg()}
+                <div class="dz-filename">
+                    ${escapeHtml(file.name)}
+                </div>
+                <button type="button"
+                    style="position:static;margin-top:6px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;"
+                    onclick="event.stopPropagation();clearDropzone('${key}')">
+                    Remove
+                </button>
+            `;
+        }
     };
+
     reader.readAsDataURL(file);
-  } else {
-    modalFiles[key] = {name:file.name};
-    dzInner.innerHTML = `${fileIconSvg()}<div class="dz-filename">${escapeHtml(file.name)}</div>
-      <button type="button" style="position:static;margin-top:6px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;" onclick="event.stopPropagation();clearDropzone('${key}')">Remove</button>`;
-  }
 }
+
+async function uploadToStorage(fileObj, folder){
+
+    if(!fileObj || !fileObj.dataUrl){
+        return null;
+    }
+
+    const response = await fetch(fileObj.dataUrl);
+    const blob = await response.blob();
+
+    const safeName = fileObj.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+
+    const filePath =
+        `${folder}/${Date.now()}_${safeName}`;
+
+    const { error } = await supabaseClient
+        .storage
+        .from(STORAGE_BUCKET)
+        .upload(filePath, blob, {
+            contentType: fileObj.type || blob.type,
+            upsert: false
+        });
+
+    if(error){
+        console.error('Storage upload:', error);
+        throw error;
+    }
+
+    const { data } = supabaseClient
+        .storage
+        .from(STORAGE_BUCKET)
+        .getPublicUrl(filePath);
+
+    return {
+        url: data.publicUrl,
+        path: filePath,
+        name: fileObj.name
+    };
+}
+  
 async function saveModal(){
 
-  const {kind, editId} = modalState;
-  const meta = modalMeta[kind];
+    const {kind, editId} = modalState;
+    const meta = modalMeta[kind];
 
-  let valid = true;
-  const payload = {};
+    let valid = true;
+    const payload = {};
 
-  document.querySelectorAll('#modal-box .field.error, #modal-box .dropzone.error')
-    .forEach(el => el.classList.remove('error'));
+    document
+        .querySelectorAll('#modal-box .field.error, #modal-box .dropzone.error')
+        .forEach(el => el.classList.remove('error'));
 
-  meta.fields.forEach(f => {
+    meta.fields.forEach(f => {
 
-    if(f.kind === 'file'){
+        if(f.kind === 'file'){
 
-      payload[f.key] = modalFiles[f.key] || null;
+            payload[f.key] = modalFiles[f.key] || null;
 
-      if(f.required && !modalFiles[f.key]){
-        valid = false;
+            // File is required only when adding a new item.
+            if(
+                f.required &&
+                editId === null &&
+                !modalFiles[f.key]
+            ){
+                valid = false;
 
-        const dz = document.getElementById('dz-' + f.key);
-        if(dz) dz.classList.add('error');
-      }
+                const dz = document.getElementById('dz-' + f.key);
+                if(dz) dz.classList.add('error');
+            }
 
-    } else {
+        } else {
 
-      const el = document.getElementById('mf-' + f.key);
+            const el = document.getElementById('mf-' + f.key);
 
-      if(!el) return;
+            if(!el) return;
 
-      const val = el.value.trim();
+            const val = el.value.trim();
 
-      payload[f.key] = val;
+            payload[f.key] = val;
 
-      if(f.required && !val){
-        valid = false;
+            if(f.required && !val){
 
-        const field = el.closest('.field');
-        if(field) field.classList.add('error');
-      }
-    }
-  });
+                valid = false;
 
-  if(!valid){
-    showToast('Please fill in all required fields.');
-    return;
-  }
+                const field = el.closest('.field');
 
-  if(kind === 'event'){
+                if(field) field.classList.add('error');
+            }
+        }
+    });
 
-    const eventData = {
-      title: payload.name,
-      description: payload.description,
-      event_date: payload.date,
-      event_time: payload.time,
-      location: payload.location
-    };
+    if(!valid){
 
-    let result;
+        showToast('Please fill in all required fields.');
 
-    if(editId !== null){
-
-      result = await supabaseClient
-        .from('events')
-        .update(eventData)
-        .eq('id', editId);
-
-    } else {
-
-      result = await supabaseClient
-        .from('events')
-        .insert([eventData]);
+        return;
     }
 
-    if(result.error){
-      console.error(result.error);
-      showToast('Could not save event');
-      return;
+    try{
+
+        /* =========================
+           EVENTS
+        ========================= */
+
+        if(kind === 'event'){
+
+            const eventData = {
+                title: payload.name,
+                description: payload.description,
+                event_date: payload.date,
+                event_time: payload.time,
+                location: payload.location
+            };
+
+            let result;
+
+            if(editId !== null){
+
+                result = await supabaseClient
+                    .from('events')
+                    .update(eventData)
+                    .eq('id', editId);
+
+            }else{
+
+                result = await supabaseClient
+                    .from('events')
+                    .insert([eventData]);
+            }
+
+            if(result.error) throw result.error;
+        }
+
+
+        /* =========================
+           NOTICES
+        ========================= */
+
+        else if(kind === 'notice'){
+
+            const noticeData = {
+                title: payload.title,
+                date: payload.date,
+                description: payload.description,
+                status: payload.status || 'Published'
+            };
+
+            let result;
+
+            if(editId !== null){
+
+                result = await supabaseClient
+                    .from('notices')
+                    .update(noticeData)
+                    .eq('id', editId);
+
+            }else{
+
+                result = await supabaseClient
+                    .from('notices')
+                    .insert([noticeData]);
+            }
+
+            if(result.error) throw result.error;
+        }
+
+
+        /* =========================
+           GALLERY
+        ========================= */
+
+        else if(kind === 'photo'){
+
+            let uploaded = null;
+
+            if(payload.photo && payload.photo.dataUrl){
+
+                uploaded = await uploadToStorage(
+                    payload.photo,
+                    'gallery'
+                );
+            }
+
+            const galleryData = {
+                title: payload.title,
+                date: payload.date,
+                description: payload.description || ''
+            };
+
+            if(uploaded){
+
+                galleryData.photo_url = uploaded.url;
+                galleryData.photo_path = uploaded.path;
+            }
+
+            let result;
+
+            if(editId !== null){
+
+                result = await supabaseClient
+                    .from('gallery')
+                    .update(galleryData)
+                    .eq('id', editId);
+
+            }else{
+
+                if(!uploaded){
+
+                    showToast('Please select a photo');
+
+                    return;
+                }
+
+                result = await supabaseClient
+                    .from('gallery')
+                    .insert([galleryData]);
+            }
+
+            if(result.error) throw result.error;
+        }
+
+
+        /* =========================
+           ACHIEVEMENTS
+        ========================= */
+
+        else if(kind === 'achievement'){
+
+            let uploaded = null;
+
+            if(payload.photo && payload.photo.dataUrl){
+
+                uploaded = await uploadToStorage(
+                    payload.photo,
+                    'achievements'
+                );
+            }
+
+            const achievementData = {
+                title: payload.title,
+                date: payload.date,
+                desc: payload.desc
+            };
+
+            if(uploaded){
+
+                achievementData.photo_url = uploaded.url;
+                achievementData.photo_path = uploaded.path;
+            }
+
+            let result;
+
+            if(editId !== null){
+
+                result = await supabaseClient
+                    .from('achievements')
+                    .update(achievementData)
+                    .eq('id', editId);
+
+            }else{
+
+                result = await supabaseClient
+                    .from('achievements')
+                    .insert([achievementData]);
+            }
+
+            if(result.error) throw result.error;
+        }
+
+
+        /* =========================
+           RESOURCES
+        ========================= */
+
+        else if(kind === 'resource'){
+
+            let uploaded = null;
+
+            if(payload.file && payload.file.dataUrl){
+
+                uploaded = await uploadToStorage(
+                    payload.file,
+                    'resources'
+                );
+            }
+
+            const resourceData = {
+                title: payload.title,
+                description: payload.description || '',
+                type: payload.type,
+                date: payload.date
+            };
+
+            if(uploaded){
+
+                resourceData.file_url = uploaded.url;
+                resourceData.file_path = uploaded.path;
+                resourceData.file_name = uploaded.name;
+            }
+
+            let result;
+
+            if(editId !== null){
+
+                result = await supabaseClient
+                    .from('resources')
+                    .update(resourceData)
+                    .eq('id', editId);
+
+            }else{
+
+                if(!uploaded){
+
+                    showToast('Please select a resource file');
+
+                    return;
+                }
+
+                result = await supabaseClient
+                    .from('resources')
+                    .insert([resourceData]);
+            }
+
+            if(result.error) throw result.error;
+        }
+
+
+        showToast(
+            editId !== null
+                ? 'Updated successfully'
+                : 'Added successfully'
+        );
+
+        closeModal();
+
+        modalState = {
+            kind:null,
+            editId:null
+        };
+
+        modalFiles = {};
+        modalFieldMeta = {};
+
+        await loadAllData();
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            error.message || 'Could not save item'
+        );
     }
-
-    if (typeof showToast === 'function') {
-  showToast(
-    editId !== null
-      ? 'Event updated successfully'
-      : 'Event added successfully'
-  );
-}
-
-closeModal();
-
-modalState = {kind:null, editId:null};
-modalFiles = {};
-modalFieldMeta = {};
-
-    await loadAllData();
-
-  } else if(kind === 'notice') {
-
-    const noticeData = {
-      title: payload.title,
-      date: payload.date,
-      description: payload.description,
-      status: payload.status || 'Published'
-    };
-
-    let result;
-
-    if(editId !== null){
-
-      result = await supabaseClient
-        .from('notices')
-        .update(noticeData)
-        .eq('id', editId);
-
-    } else {
-
-      result = await supabaseClient
-        .from('notices')
-        .insert([noticeData]);
-
-    }
-
-    if(result.error){
-      console.error(result.error);
-      showToast('Could not save notice');
-      return;
-    }
-
-    showToast(
-      editId !== null
-        ? 'Notice updated successfully'
-        : 'Notice added successfully'
-    );
-
-    closeModal();
-
-    modalState = {kind:null, editId:null};
-    modalFiles = {};
-    modalFieldMeta = {};
-
-    await loadAllData();
-  }
 }
 function clearDropzone(key){
   delete modalFiles[key];
@@ -1320,38 +1687,107 @@ function renderAll(){
 }
 async function loadAllData(){
 
-  // EVENTS
-  const { data: events, error: eventsError } = await supabaseClient
-    .from('events')
-    .select('*')
-    .order('event_date', { ascending: true });
+    const results = await Promise.all([
 
-  if(eventsError){
-    console.error('Events:', eventsError);
-    showToast('Could not load events');
-    return;
-  }
+        supabaseClient
+            .from('events')
+            .select('*')
+            .order('event_date', { ascending:true }),
 
-  data.events = events || [];
+        supabaseClient
+            .from('notices')
+            .select('*')
+            .order('date', { ascending:false }),
+
+        supabaseClient
+            .from('gallery')
+            .select('*')
+            .order('date', { ascending:false }),
+
+        supabaseClient
+            .from('achievements')
+            .select('*')
+            .order('date', { ascending:false }),
+
+        supabaseClient
+            .from('resources')
+            .select('*')
+            .order('date', { ascending:false })
+    ]);
+
+    const [
+        eventsResult,
+        noticesResult,
+        galleryResult,
+        achievementsResult,
+        resourcesResult
+    ] = results;
 
 
-  // NOTICES
-  const { data: notices, error: noticesError } = await supabaseClient
-    .from('notices')
-    .select('*')
-    .order('date', { ascending: false });
+    if(eventsResult.error)
+        console.error('Events:', eventsResult.error);
 
-  if(noticesError){
-    console.error('Notices:', noticesError);
-    showToast('Could not load notices');
-    return;
-  }
+    if(noticesResult.error)
+        console.error('Notices:', noticesResult.error);
 
-  data.notices = notices || [];
+    if(galleryResult.error)
+        console.error('Gallery:', galleryResult.error);
+
+    if(achievementsResult.error)
+        console.error('Achievements:', achievementsResult.error);
+
+    if(resourcesResult.error)
+        console.error('Resources:', resourcesResult.error);
 
 
-  // RENDER EVERYTHING
-  renderAll();
+    data.events =
+        eventsResult.data || [];
+
+    data.notices =
+        noticesResult.data || [];
+
+
+    data.gallery =
+        (galleryResult.data || []).map(g => ({
+            ...g,
+            photo: g.photo_url
+                ? {
+                    name: g.photo_path
+                        ? g.photo_path.split('/').pop()
+                        : 'Photo',
+                    dataUrl: g.photo_url
+                }
+                : null
+        }));
+
+
+    data.achievements =
+        (achievementsResult.data || []).map(a => ({
+            ...a,
+            photo: a.photo_url
+                ? {
+                    name: a.photo_path
+                        ? a.photo_path.split('/').pop()
+                        : 'Photo',
+                    dataUrl: a.photo_url
+                }
+                : null
+        }));
+
+
+    data.resources =
+        (resourcesResult.data || []).map(r => ({
+            ...r,
+            file: r.file_url
+                ? {
+                    name: r.file_name || 'File',
+                    dataUrl: r.file_url
+                }
+                : null
+        }));
+
+
+    renderAll();
 }
 loadAllData();
 </script>
