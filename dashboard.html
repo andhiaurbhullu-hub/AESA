@@ -1236,14 +1236,18 @@ async function saveModal(){
     }
 
     showToast(
-      editId !== null
-        ? 'Event updated successfully'
-        : 'Event added successfully'
-    );
+  editId !== null
+    ? 'Event updated successfully'
+    : 'Event added successfully'
+);
 
-    closeModal();
+closeModal();
 
-    await loadAllData();
+modalState = {kind:null, editId:null};
+modalFiles = {};
+modalFieldMeta = {};
+
+await loadAllData();
   }
 }
 function clearDropzone(key){
@@ -1266,24 +1270,29 @@ function renderAll(){
 }
 async function loadAllData(){
 
-  const events = await supabaseClient
+  const { data: events, error } = await supabaseClient
     .from('events')
     .select('*')
     .order('event_date', { ascending: true });
 
-  if(events.error){
-    console.error('Events:', events.error);
-  } else {
-    data.events = events.data || [];
+  if(error){
+    console.error('Events:', error);
+    showToast('Could not load events');
+    return;
   }
 
-  // Keep the other sections available
+  data.events = (events || []).map(e => ({
+    id: e.id,
+    name: e.title,
+    date: e.event_date,
+    time: e.event_time,
+    location: e.location,
+    description: e.description,
+    image_url: e.image_url
+  }));
+
   renderDashboard();
   renderEvents();
-  renderNotices();
-  renderGallery();
-  renderAchievements();
-  renderResources();
 }
 </script>
 </body>
