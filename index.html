@@ -72,6 +72,121 @@
   .achieve-body p { font-size: 13px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
   .achieve-date { font-size: 12px; color: #94a3b8; }
 
+
+  /* ================================
+   DYNAMIC ACHIEVEMENTS
+================================ */
+
+    .achieve-cards{
+        display:grid;
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+        gap:20px;
+        margin-top:24px;
+    }
+    
+    .achieve-card{
+        min-width:0;
+        overflow:hidden;
+        background:#fff;
+        border:1px solid #e8edf5;
+        border-radius:14px;
+        box-shadow:0 8px 24px rgba(15,23,42,.06);
+    }
+    
+    .achieve-img{
+        width:100%;
+        height:190px;
+        overflow:hidden;
+        background:#f1f5f9;
+    }
+    
+    .achieve-img img{
+        width:100%;
+        height:100%;
+        display:block;
+        object-fit:cover;
+    }
+    
+    .achievement-placeholder{
+        width:100%;
+        height:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:42px;
+        color:#fcd34d;
+    }
+    
+    .achieve-body{
+        padding:18px;
+    }
+    
+    .achieve-body h3{
+        margin:0 0 8px;
+        font-size:16px;
+        line-height:1.35;
+        color:#0f172a;
+    }
+    
+    .achieve-body p{
+        margin:0;
+        color:#64748b;
+        font-size:13px;
+        line-height:1.6;
+    }
+    
+    .achieve-date{
+        margin-top:14px;
+        font-size:11px;
+        font-weight:600;
+        color:#2563eb;
+    }
+    
+    .achievement-empty{
+        grid-column:1/-1;
+        text-align:center;
+        padding:50px 20px;
+        border:1px dashed #cbd5e1;
+        border-radius:14px;
+        color:#64748b;
+    }
+    
+    .achievement-empty i{
+        font-size:32px;
+        color:#fcd34d;
+        margin-bottom:10px;
+    }
+    
+    .achievement-empty h3{
+        margin:0 0 5px;
+        color:#0f172a;
+    }
+    
+    .achievement-empty p{
+        margin:0;
+    }  
+
+    @media (max-width:900px){
+
+    .achieve-cards{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+    }
+
+    }
+    
+    @media (max-width:600px){
+    
+        .achieve-cards{
+            grid-template-columns:1fr;
+            gap:15px;
+        }
+    
+        .achieve-img{
+            height:210px;
+        }
+    
+    }
+    
   /* ═══════════════════════════
      2. GALLERY
   ═══════════════════════════ */
@@ -79,6 +194,56 @@
   .gallery-item { border-radius: 10px; height: 190px; overflow: hidden; background: linear-gradient(135deg,#1e293b,#334155); display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 28px; }
   .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
   .gallery-footer { text-align: center; margin-top: 28px; }
+    .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:16px;
+}
+
+.gallery-item{
+    position:relative;
+    overflow:hidden;
+    border-radius:12px;
+    aspect-ratio:4/3;
+    background:#f1f5f9;
+}
+
+.gallery-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform .3s ease;
+}
+
+.gallery-item:hover img{
+    transform:scale(1.04);
+}
+
+@media (max-width:1000px){
+
+    .gallery-grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+
+}
+
+@media (max-width:700px){
+
+    .gallery-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+
+}
+
+@media (max-width:430px){
+
+    .gallery-grid{
+        grid-template-columns:1fr;
+    }
+
+}
 
   /* ═══════════════════════════
      3. NOTICES
@@ -553,6 +718,358 @@
   width: 100%;
 }
 
+/* =========================================================
+   MOBILE RESPONSIVE DESIGN
+   ========================================================= */
+
+/* Tablets */
+@media (max-width: 900px){
+
+    .content-section{
+        padding-left:24px;
+        padding-right:24px;
+    }
+
+    .page-hero{
+        padding-left:24px;
+        padding-right:24px;
+    }
+
+    /* Events */
+    .events-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:16px;
+    }
+
+    /* Gallery */
+    .gallery-grid{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:12px;
+    }
+
+    /* Achievements */
+    .achieve-cards{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:16px;
+    }
+
+    /* Resources */
+    .resource-row{
+        gap:14px;
+    }
+
+}
+
+
+/* =========================================================
+   PHONES
+   ========================================================= */
+
+@media (max-width: 600px){
+
+    /* ---------- GENERAL ---------- */
+
+    html{
+        scroll-behavior:smooth;
+    }
+
+    body{
+        overflow-x:hidden;
+    }
+
+    .content-section{
+        width:100%;
+        padding:30px 16px;
+    }
+
+    .page-hero{
+        padding:35px 16px 25px;
+        text-align:center;
+    }
+
+    .page-hero h1{
+        font-size:28px;
+        line-height:1.2;
+    }
+
+    .page-hero p{
+        font-size:13px;
+        line-height:1.6;
+    }
+
+
+    /* ---------- EVENTS ---------- */
+
+    .events-grid{
+        grid-template-columns:1fr;
+        gap:16px;
+    }
+
+    .event-card{
+        width:100%;
+    }
+
+    .event-card img{
+        width:100%;
+        height:auto;
+        max-height:220px;
+        object-fit:cover;
+    }
+
+
+    /* ---------- GALLERY ---------- */
+
+    .gallery-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+
+    .gallery-item{
+        width:100%;
+        aspect-ratio:1/1;
+    }
+
+    .gallery-item img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+    }
+
+
+    /* ---------- ACHIEVEMENTS ---------- */
+
+    .stat-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:10px;
+        margin-top:24px;
+    }
+
+    .stat-card{
+        min-width:0;
+        padding:15px 10px;
+    }
+
+    .stat-card .num{
+        font-size:22px;
+    }
+
+    .stat-card .label{
+        font-size:10px;
+    }
+
+    .stat-icon{
+        margin-bottom:8px;
+    }
+
+    .achieve-cards{
+        grid-template-columns:1fr;
+        gap:16px;
+    }
+
+    .achieve-card{
+        width:100%;
+    }
+
+    .achieve-img{
+        height:210px;
+    }
+
+    .achieve-body{
+        padding:16px;
+    }
+
+    .achieve-body h3{
+        font-size:16px;
+    }
+
+    .achieve-body p{
+        font-size:13px;
+        line-height:1.6;
+    }
+
+
+    /* ---------- NOTICES ---------- */
+
+    .notice-list{
+        width:100%;
+    }
+
+    .notice-row{
+        display:flex;
+        gap:12px;
+        padding:16px 0;
+    }
+
+    .notice-date{
+        flex:0 0 48px;
+        width:48px;
+    }
+
+    .notice-date .d{
+        font-size:20px;
+    }
+
+    .notice-date .m{
+        font-size:9px;
+    }
+
+    .notice-title-row{
+        display:flex;
+        flex-wrap:wrap;
+        align-items:center;
+        gap:7px;
+    }
+
+    .notice-title-row h3{
+        font-size:14px;
+        line-height:1.4;
+    }
+
+    .notice-desc{
+        font-size:12px;
+        line-height:1.6;
+    }
+
+
+    /* ---------- RESOURCES ---------- */
+
+    .resource-list{
+        width:100%;
+    }
+
+    .resource-row{
+        display:flex;
+        flex-wrap:wrap;
+        gap:12px;
+        padding:16px;
+    }
+
+    .resource-icon{
+        flex:0 0 42px;
+        width:42px;
+        height:42px;
+    }
+
+    .resource-body{
+        flex:1;
+        min-width:0;
+    }
+
+    .resource-body h3{
+        font-size:14px;
+        line-height:1.4;
+    }
+
+    .resource-body p{
+        font-size:12px;
+        line-height:1.5;
+    }
+
+    .resource-action{
+        width:100%;
+        margin-left:54px;
+        justify-content:flex-start;
+    }
+
+
+    /* ---------- TABS ---------- */
+
+    .tabs{
+        display:flex;
+        width:100%;
+        overflow-x:auto;
+        gap:8px;
+        padding-bottom:6px;
+        scrollbar-width:none;
+    }
+
+    .tabs::-webkit-scrollbar{
+        display:none;
+    }
+
+    .tab-btn{
+        flex:0 0 auto;
+        white-space:nowrap;
+        font-size:11px;
+        padding:8px 13px;
+    }
+
+
+    /* ---------- SECTION HEADINGS ---------- */
+
+    .section-heading{
+        font-size:14px !important;
+        line-height:1.4;
+    }
+
+
+    /* ---------- BUTTONS ---------- */
+
+    .btn,
+    button{
+        max-width:100%;
+    }
+
+
+    /* ---------- IMAGES ---------- */
+
+    img{
+        max-width:100%;
+    }
+
+
+    /* ---------- FOOTER ---------- */
+
+    footer{
+        padding-left:20px;
+        padding-right:20px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px){
+
+    .content-section{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .page-hero{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .page-hero h1{
+        font-size:24px;
+    }
+
+    .gallery-grid{
+        gap:7px;
+    }
+
+    .stat-grid{
+        gap:7px;
+    }
+
+    .stat-card{
+        padding:12px 7px;
+    }
+
+    .stat-card .num{
+        font-size:20px;
+    }
+
+    .achieve-img{
+        height:180px;
+    }
+
+}
+    
   </style>
 </head>
 <body>
@@ -720,19 +1237,70 @@
      1. ACHIEVEMENTS
 ═══════════════════════════════════════════ -->
 <section id="section-achievements" class="page-section">
+
   <div class="page-hero">
+
     <h1>ACHIEVEMENTS</h1>
-    <p>Milestones that motivate us to aim higher and achieve more.</p>
+
+    <p>
+      Milestones that motivate us to aim higher and achieve more.
+    </p>
+
     <div class="stat-grid">
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-trophy" style="color:#fcd34d;"></i></div><div class="num">0</div><div class="label">Awards Won</div></div>
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-medal" style="color:#f472b6;"></i></div><div class="num">0</div><div class="label">Competition Wins</div></div>
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-certificate" style="color:#7dd3fc;"></i></div><div class="num">0</div><div class="label">Certifications</div></div>
-      <div class="stat-card"><div class="stat-icon"><i class="fas fa-star" style="color:#fcd34d;"></i></div><div class="num">0</div><div class="label">Recognitions</div></div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-trophy" style="color:#fcd34d;"></i>
+        </div>
+        <div class="num" id="achievement-awards">0</div>
+        <div class="label">Awards Won</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-medal" style="color:#f472b6;"></i>
+        </div>
+        <div class="num" id="achievement-wins">0</div>
+        <div class="label">Competition Wins</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-certificate" style="color:#7dd3fc;"></i>
+        </div>
+        <div class="num" id="achievement-certifications">0</div>
+        <div class="label">Certifications</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-star" style="color:#fcd34d;"></i>
+        </div>
+        <div class="num" id="achievement-recognitions">0</div>
+        <div class="label">Recognitions</div>
+      </div>
+
     </div>
+
   </div>
+
+
   <div class="content-section">
-    <div class="section-heading" style="font-size:15px;letter-spacing:1px;">RECENT ACHIEVEMENTS</div>
-    
+
+    <div
+      class="section-heading"
+      style="font-size:15px;letter-spacing:1px;"
+    >
+      RECENT ACHIEVEMENTS
+    </div>
+
+    <div
+      class="achieve-cards"
+      id="public-achievements"
+    ></div>
+
+  </div>
+
 </section>
 
 
@@ -740,11 +1308,14 @@
      2. GALLERY
 ═══════════════════════════════════════════ -->
 <section id="section-gallery" class="page-section">
+
   <div class="page-hero">
     <h1>GALLERY</h1>
     <p>Capturing moments, creating memories.</p>
   </div>
+
   <div class="content-section">
+
     <div class="tabs">
       <button class="tab-btn active">All</button>
       <button class="tab-btn">Events</button>
@@ -752,11 +1323,12 @@
       <button class="tab-btn">Competitions</button>
       <button class="tab-btn">Celebrations</button>
     </div>
-    <div class="gallery-grid" id="public-gallery"></div>
-  </div>
-  <div class="achieve-cards" id="public-achievements"></div>
-</section>
 
+    <div class="gallery-grid" id="public-gallery"></div>
+
+  </div>
+
+</section>
 
 
 <!-- ═══════════════════════════════════════════
@@ -1316,38 +1888,43 @@ async function loadPublicAchievements(){
     if(!data || data.length === 0){
 
         container.innerHTML = `
-            <div class="achieve-card">
-                <div class="achieve-body">
-                    <h3>No achievements yet</h3>
-                    <p>Achievements will appear here.</p>
-                </div>
+            <div class="achievement-empty">
+                <i class="fas fa-trophy"></i>
+                <h3>No achievements yet</h3>
+                <p>Our achievements will appear here.</p>
             </div>
         `;
 
         return;
     }
 
+
     container.innerHTML =
         data.map(a => `
 
-            <div class="achieve-card">
+            <article class="achieve-card">
 
                 <div class="achieve-img">
 
                     ${
                         a.photo_url
 
-                        ? `<img
-                            src="${escapeHTML(a.photo_url)}"
-                            alt="${escapeHTML(a.title)}"
-                            style="width:100%;height:100%;object-fit:cover;"
-                           >`
+                        ? `
+                            <img
+                                src="${escapeHTML(a.photo_url)}"
+                                alt="${escapeHTML(a.title)}"
+                            >
+                          `
 
-                        : `<i class="fas fa-trophy"
-                              style="color:#fcd34d;"></i>`
+                        : `
+                            <div class="achievement-placeholder">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                          `
                     }
 
                 </div>
+
 
                 <div class="achieve-body">
 
@@ -1356,7 +1933,7 @@ async function loadPublicAchievements(){
                     </h3>
 
                     <p>
-                        ${escapeHTML(a.desc)}
+                        ${escapeHTML(a.description || '')}
                     </p>
 
                     <div class="achieve-date">
@@ -1365,9 +1942,47 @@ async function loadPublicAchievements(){
 
                 </div>
 
-            </div>
+            </article>
 
         `).join('');
+
+
+    /* Update achievement statistics */
+
+    const total = data.length;
+
+    const awards =
+        data.filter(a =>
+            /award|winner|won/i.test(a.title)
+        ).length;
+
+    const competitions =
+        data.filter(a =>
+            /competition|contest|hackathon|challenge/i.test(a.title)
+        ).length;
+
+    const certifications =
+        data.filter(a =>
+            /certificate|certification/i.test(a.title)
+        ).length;
+
+    const recognitions =
+        data.filter(a =>
+            /recognition|recognized|achievement/i.test(a.title)
+        ).length;
+
+
+    document.getElementById('achievement-awards').textContent =
+        awards;
+
+    document.getElementById('achievement-wins').textContent =
+        competitions;
+
+    document.getElementById('achievement-certifications').textContent =
+        certifications;
+
+    document.getElementById('achievement-recognitions').textContent =
+        recognitions;
 }
 
 async function loadPublicResources(){
