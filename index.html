@@ -805,39 +805,7 @@
       <button class="tab-btn">Results</button>
       <button class="tab-btn">Updates</button>
     </div>
-    <div class="notice-list">
-      <div class="notice-row">
-        <div class="notice-date"><div class="d">15</div><div class="m">MAY</div></div>
-        <div>
-          <div class="notice-title-row"><h3>Workshop on Drone Technology</h3><span class="notice-badge badge-event">Event</span></div>
-          <p class="notice-desc">A hands-on workshop on Drone Technology on 20th May 2024.</p>
-          <a href="#" class="notice-read">Read More &rarr;</a>
-        </div>
-      </div>
-      <div class="notice-row">
-        <div class="notice-date"><div class="d">10</div><div class="m">MAY</div></div>
-        <div>
-          <div class="notice-title-row"><h3>Annual Technical Fest – Registrations Open!</h3><span class="notice-badge badge-event">Event</span></div>
-          <p class="notice-desc">Register your team for TechAero 2k24. Last date: 25th May 2024.</p>
-          <a href="#" class="notice-read">Read More &rarr;</a>
-        </div>
-      </div>
-      <div class="notice-row">
-        <div class="notice-date"><div class="d">05</div><div class="m">MAY</div></div>
-        <div>
-          <div class="notice-title-row"><h3>Result: Aero Design Challenge 2024</h3><span class="notice-badge badge-result">Result</span></div>
-          <p class="notice-desc">Results for Aero Design Challenge 2024 are now out.</p>
-          <a href="#" class="notice-read">Read More &rarr;</a>
-        </div>
-      </div>
-      <div class="notice-row">
-        <div class="notice-date"><div class="d">30</div><div class="m">APR</div></div>
-        <div>
-          <div class="notice-title-row"><h3>General Body Meeting</h3><span class="notice-badge badge-notice">Notice</span></div>
-          <p class="notice-desc">All members are requested to attend the GBM on 3rd May 2024.</p>
-          <a href="#" class="notice-read">Read More &rarr;</a>
-        </div>
-      </div>
+    <div class="notice-list" id="public-notices">
     </div>
     <a href="#" class="view-all-link">View All Notices <i class="fas fa-arrow-right"></i></a>
   </div>
@@ -1261,7 +1229,83 @@ window.addEventListener("popstate", function(event) {
         });
     }
 
-
+        async function loadPublicNotices() {
+    
+        const container = document.getElementById("public-notices");
+    
+        const { data, error } = await supabaseClient
+            .from("notices")
+            .select("*")
+            .eq("status", "Published")
+            .order("date", { ascending: false });
+    
+        if (error) {
+            console.error("Error loading notices:", error);
+            return;
+        }
+    
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div class="notice-row">
+                    <div>
+                        <div class="notice-title-row">
+                            <h3>No notices available</h3>
+                        </div>
+                        <p class="notice-desc">
+                            There are currently no published notices.
+                        </p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+    
+        container.innerHTML = "";
+    
+        data.forEach(notice => {
+    
+            const date = new Date(notice.date + "T00:00:00");
+    
+            const day = date.toLocaleDateString("en-GB", {
+                day: "2-digit"
+            });
+    
+            const month = date.toLocaleDateString("en-GB", {
+                month: "short"
+            }).toUpperCase();
+    
+            const row = document.createElement("div");
+    
+            row.className = "notice-row";
+    
+            row.innerHTML = `
+                <div class="notice-date">
+                    <div class="d">${day}</div>
+                    <div class="m">${month}</div>
+                </div>
+    
+                <div>
+                    <div class="notice-title-row">
+                        <h3>${escapeHTML(notice.title)}</h3>
+                        <span class="notice-badge badge-notice">
+                            Notice
+                        </span>
+                    </div>
+    
+                    <p class="notice-desc">
+                        ${escapeHTML(notice.description || "")}
+                    </p>
+    
+                    <a href="#" class="notice-read">
+                        Read More &rarr;
+                    </a>
+                </div>
+            `;
+    
+            container.appendChild(row);
+        });
+    }
+    
     function formatDate(dateString) {
         const date = new Date(dateString + "T00:00:00");
 
@@ -1284,6 +1328,7 @@ window.addEventListener("popstate", function(event) {
 
 
     loadPublicEvents();
+    loadPublicNotices();
 </script>
     </body>
 </html>
