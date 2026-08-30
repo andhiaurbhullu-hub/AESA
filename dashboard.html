@@ -1235,11 +1235,13 @@ async function saveModal(){
       return;
     }
 
-    showToast(
-  editId !== null
-    ? 'Event updated successfully'
-    : 'Event added successfully'
-);
+    if (typeof showToast === 'function') {
+  showToast(
+    editId !== null
+      ? 'Event updated successfully'
+      : 'Event added successfully'
+  );
+}
 
 closeModal();
 
