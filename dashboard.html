@@ -1279,8 +1279,14 @@ async function loadAllData(){
     data.events = events.data || [];
   }
 
-  renderAll();
-};
+  // Keep the other sections available
+  renderDashboard();
+  renderEvents();
+  renderNotices();
+  renderGallery();
+  renderAchievements();
+  renderResources();
+}
 </script>
 </body>
 </html>
