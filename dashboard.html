@@ -1251,7 +1251,53 @@ modalState = {kind:null, editId:null};
 modalFiles = {};
 modalFieldMeta = {};
 
-await loadAllData();
+    await loadAllData();
+
+  } else if(kind === 'notice') {
+
+    const noticeData = {
+      title: payload.title,
+      date: payload.date,
+      description: payload.description,
+      status: payload.status || 'Published'
+    };
+
+    let result;
+
+    if(editId !== null){
+
+      result = await supabaseClient
+        .from('notices')
+        .update(noticeData)
+        .eq('id', editId);
+
+    } else {
+
+      result = await supabaseClient
+        .from('notices')
+        .insert([noticeData]);
+
+    }
+
+    if(result.error){
+      console.error(result.error);
+      showToast('Could not save notice');
+      return;
+    }
+
+    showToast(
+      editId !== null
+        ? 'Notice updated successfully'
+        : 'Notice added successfully'
+    );
+
+    closeModal();
+
+    modalState = {kind:null, editId:null};
+    modalFiles = {};
+    modalFieldMeta = {};
+
+    await loadAllData();
   }
 }
 function clearDropzone(key){
@@ -1274,22 +1320,39 @@ function renderAll(){
 }
 async function loadAllData(){
 
-  const { data: events, error } = await supabaseClient
+  // EVENTS
+  const { data: events, error: eventsError } = await supabaseClient
     .from('events')
     .select('*')
     .order('event_date', { ascending: true });
 
-  if(error){
-    console.error('Events:', error);
+  if(eventsError){
+    console.error('Events:', eventsError);
     showToast('Could not load events');
     return;
   }
 
   data.events = events || [];
 
+
+  // NOTICES
+  const { data: notices, error: noticesError } = await supabaseClient
+    .from('notices')
+    .select('*')
+    .order('date', { ascending: false });
+
+  if(noticesError){
+    console.error('Notices:', noticesError);
+    showToast('Could not load notices');
+    return;
+  }
+
+  data.notices = notices || [];
+
+
+  // RENDER EVERYTHING
   renderAll();
 }
-
 loadAllData();
 </script>
 </body>
