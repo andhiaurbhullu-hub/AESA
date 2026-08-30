@@ -816,7 +816,53 @@
         object-fit:cover;
     }
 
+    .event-empty{
+    grid-column:1/-1;
+    text-align:center;
+    padding:50px 20px;
+    border:1px dashed #cbd5e1;
+    border-radius:14px;
+    color:#64748b;
+}
 
+.event-empty i{
+    font-size:32px;
+    margin-bottom:12px;
+}
+
+.event-empty h3{
+    margin:0 0 6px;
+    color:#0f172a;
+}
+
+.event-empty p{
+    margin:0;
+    font-size:13px;
+}
+
+
+@media(max-width:600px){
+
+    .events-grid{
+        grid-template-columns:1fr;
+        gap:16px;
+    }
+
+    .event-card{
+        width:100%;
+    }
+
+    .event-body{
+        min-width:0;
+    }
+
+    .event-meta{
+        flex-wrap:wrap;
+        gap:8px;
+    }
+
+}
+    
     /* ---------- GALLERY ---------- */
 
     .gallery-grid{
@@ -1069,7 +1115,63 @@
     }
 
 }
-    
+    @media (max-width: 700px){
+
+    .event-list{
+        width:100%;
+    }
+
+    .event-row{
+        display:grid;
+        grid-template-columns:52px 1fr;
+        gap:14px;
+        padding:16px;
+        width:100%;
+    }
+
+    .event-date-badge{
+        width:52px;
+        height:52px;
+        flex-shrink:0;
+    }
+
+    .event-row-body{
+        min-width:0;
+    }
+
+    .event-row-title{
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px;
+        align-items:flex-start;
+    }
+
+    .event-row-title h3{
+        width:100%;
+        font-size:15px;
+        line-height:1.4;
+    }
+
+    .event-row-meta{
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+        font-size:11px;
+        line-height:1.5;
+    }
+
+    .event-row-desc{
+        font-size:12px;
+        line-height:1.6;
+    }
+
+    .btn-event-action{
+        grid-column:2;
+        width:100%;
+        margin-top:4px;
+    }
+
+}
   </style>
 </head>
 <body>
@@ -1148,18 +1250,7 @@
     <div class="section-title"><i class="fas fa-calendar-alt"></i> UPCOMING EVENTS</div>
     <a href="javascript:void(0)" class="view-all" onclick="showSection('section-events')">View All Events <i class="fas fa-arrow-right"></i></a>
   </div>
-  <div class="events-grid">
-    <div class="event-card">
-
-  <div class="event-body">
-
-    <div class="event-title">
-      Loading events...
-    </div>
-
-  </div>
-
-</div>
+  <div class="events-grid" id="public-events"></div>
   </div>
 </section>
 
@@ -1473,35 +1564,7 @@
       <button class="tab-btn">Ongoing</button>
       <button class="tab-btn">Past</button>
     </div>
-    <div class="event-list">
-      <div class="event-row">
-        <div class="event-date-badge"><div class="d">20</div><div class="m">MAY</div></div>
-        <div class="event-row-body">
-          <div class="event-row-title"><h3>Drone Technology Workshop</h3><span class="status-badge status-upcoming">Upcoming</span></div>
-          <div class="event-row-meta"><span><i class="fas fa-clock"></i> 20 May 2024, 10:00 AM – 04:00 PM</span><span><i class="fas fa-map-marker-alt"></i> Seminar Hall</span></div>
-          <p class="event-row-desc">Learn the basics of drone technology and its applications.</p>
-        </div>
-        <button class="btn-event-action">Register Now</button>
-      </div>
-      <div class="event-row">
-        <div class="event-date-badge"><div class="d">25</div><div class="m">MAY</div></div>
-        <div class="event-row-body">
-          <div class="event-row-title"><h3>TechAero 2k24</h3><span class="status-badge status-upcoming">Upcoming</span></div>
-          <div class="event-row-meta"><span><i class="fas fa-clock"></i> 25 – 27 May 2024, 09:00 AM Onwards</span><span><i class="fas fa-map-marker-alt"></i> ACPCOE Campus</span></div>
-          <p class="event-row-desc">Annual technical fest with exciting competitions and events.</p>
-        </div>
-        <button class="btn-event-action">Register Now</button>
-      </div>
-      <div class="event-row">
-        <div class="event-date-badge"><div class="d">30</div><div class="m">MAY</div></div>
-        <div class="event-row-body">
-          <div class="event-row-title"><h3>Robotics Hackathon</h3><span class="status-badge status-ongoing">Ongoing</span></div>
-          <div class="event-row-meta"><span><i class="fas fa-clock"></i> 30 May – 1 June 2024, 09:00 AM Onwards</span><span><i class="fas fa-map-marker-alt"></i> Lab 101</span></div>
-          <p class="event-row-desc">Build. Code. Innovate. Solve real-world problems.</p>
-        </div>
-        <button class="btn-event-action">View Details</button>
-      </div>
-    </div>
+    <div class="event-list" id="public-event-list"></div>
     <a href="#" class="view-all-link">View All Events <i class="fas fa-arrow-right"></i></a>
   </div>
 </section>
@@ -1665,177 +1728,28 @@ window.addEventListener("popstate", function(event) {
         SUPABASE_PUBLISHABLE_KEY
     );
 
-    async function loadPublicEvents() {
-
-        const container = document.querySelector(".events-grid");
-
-        const { data, error } = await supabaseClient
-            .from("events")
-            .select("*")
-            .order("event_date", { ascending: true });
-
-        if (error) {
-            console.error("Error loading events:", error);
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            container.innerHTML = `
-                <div class="event-card">
-                    <div class="event-body">
-                        <div class="event-title">
-                            No upcoming events
-                        </div>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = "";
-
-        data.forEach(event => {
-
-            const card = document.createElement("div");
-
-            card.className = "event-card";
-
-            card.innerHTML = `
-                <div class="event-body">
-
-                    <span class="event-tag tag-workshop">
-                        Event
-                    </span>
-
-                    <div class="event-title">
-                        ${escapeHTML(event.title)}
-                    </div>
-
-                    <div class="event-meta">
-
-                        <span>
-                            <i class="fas fa-calendar"></i>
-                            ${formatDate(event.event_date)}
-                        </span>
-
-                        <span>
-                            <i class="fas fa-map-marker-alt"></i>
-                            ${escapeHTML(event.location || "Location TBA")}
-                        </span>
-
-                    </div>
-
-                    <p style="
-                        font-size:13px;
-                        color:#64748b;
-                        line-height:1.5;
-                        margin-bottom:14px;
-                    ">
-                        ${escapeHTML(event.description || "")}
-                    </p>
-
-                    <a href="#" class="btn-register">
-                        View Details
-                    </a>
-
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
-    }
-
-        async function loadPublicNotices() {
-    
-        const container = document.getElementById("public-notices");
-    
-        const { data, error } = await supabaseClient
-            .from("notices")
-            .select("*")
-            .eq("status", "Published")
-            .order("date", { ascending: false });
-    
-        if (error) {
-            console.error("Error loading notices:", error);
-            return;
-        }
-    
-        if (!data || data.length === 0) {
-            container.innerHTML = `
-                <div class="notice-row">
-                    <div>
-                        <div class="notice-title-row">
-                            <h3>No notices available</h3>
-                        </div>
-                        <p class="notice-desc">
-                            There are currently no published notices.
-                        </p>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-    
-        container.innerHTML = "";
-    
-        data.forEach(notice => {
-    
-            const date = new Date(notice.date + "T00:00:00");
-    
-            const day = date.toLocaleDateString("en-GB", {
-                day: "2-digit"
-            });
-    
-            const month = date.toLocaleDateString("en-GB", {
-                month: "short"
-            }).toUpperCase();
-    
-            const row = document.createElement("div");
-    
-            row.className = "notice-row";
-    
-            row.innerHTML = `
-                <div class="notice-date">
-                    <div class="d">${day}</div>
-                    <div class="m">${month}</div>
-                </div>
-    
-                <div>
-                    <div class="notice-title-row">
-                        <h3>${escapeHTML(notice.title)}</h3>
-                        <span class="notice-badge badge-notice">
-                            Notice
-                        </span>
-                    </div>
-    
-                    <p class="notice-desc">
-                        ${escapeHTML(notice.description || "")}
-                    </p>
-    
-                    <a href="#" class="notice-read">
-                        Read More &rarr;
-                    </a>
-                </div>
-            `;
-    
-            container.appendChild(row);
-        });
-    }
-
-    async function loadPublicGallery(){
+    async function loadPublicEvents(){
 
     const container =
-        document.getElementById('public-gallery');
+        document.getElementById('public-events');
+
+    if(!container) return;
 
     const { data, error } =
         await supabaseClient
-            .from('gallery')
+            .from('events')
             .select('*')
-            .order('date', { ascending:false });
+            .order('event_date', { ascending:true });
 
     if(error){
 
-        console.error('Gallery:', error);
+        console.error('Events:', error);
+
+        container.innerHTML = `
+            <div class="event-empty">
+                Unable to load events.
+            </div>
+        `;
 
         return;
     }
@@ -1843,8 +1757,10 @@ window.addEventListener("popstate", function(event) {
     if(!data || data.length === 0){
 
         container.innerHTML = `
-            <div class="gallery-item">
-                <i class="fas fa-image"></i>
+            <div class="event-empty">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>No upcoming events</h3>
+                <p>New events will appear here.</p>
             </div>
         `;
 
@@ -1852,21 +1768,376 @@ window.addEventListener("popstate", function(event) {
     }
 
     container.innerHTML =
-        data.map(photo => `
+        data.map(event => {
 
-            <div class="gallery-item">
+            const date =
+                new Date(event.event_date + 'T00:00:00');
 
-                <img
-                    src="${escapeHTML(photo.photo_url)}"
-                    alt="${escapeHTML(photo.title)}"
-                    style="width:100%;height:100%;object-fit:cover;"
+            const day =
+                date.toLocaleDateString('en-GB',{
+                    day:'2-digit'
+                });
+
+            const month =
+                date.toLocaleDateString('en-GB',{
+                    month:'short'
+                }).toUpperCase();
+
+            const formattedDate =
+                date.toLocaleDateString('en-GB',{
+                    day:'2-digit',
+                    month:'short',
+                    year:'numeric'
+                });
+
+
+            return `
+
+                <article class="event-card">
+
+                    <div class="event-date">
+
+                        <span class="event-day">
+                            ${day}
+                        </span>
+
+                        <span class="event-month">
+                            ${month}
+                        </span>
+
+                    </div>
+
+
+                    <div class="event-body">
+
+                        <h3>
+                            ${escapeHTML(event.title)}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                event.description || ''
+                            )}
+                        </p>
+
+
+                        <div class="event-meta">
+
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                ${formattedDate}
+                            </span>
+
+                            <span>
+                                <i class="fas fa-clock"></i>
+                                ${escapeHTML(
+                                    event.event_time || ''
+                                )}
+                            </span>
+
+                            <span>
+                                <i class="fas fa-location-dot"></i>
+                                ${escapeHTML(
+                                    event.location || ''
+                                )}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            `;
+
+        }).join('');
+}
+
+        async function loadPublicEvents(){
+
+    const container =
+        document.getElementById('public-event-list');
+
+    if(!container) return;
+
+    const { data, error } =
+        await supabaseClient
+            .from('events')
+            .select('*')
+            .order('event_date', { ascending:true });
+
+    if(error){
+
+        console.error('Events:', error);
+
+        container.innerHTML = `
+            <div class="event-empty">
+                Unable to load events.
+            </div>
+        `;
+
+        return;
+    }
+
+    const events = data || [];
+
+    renderPublicEvents(events);
+
+    setupEventFilters(events);
+}
+
+function renderPublicEvents(events){
+
+    const container =
+        document.getElementById('public-event-list');
+
+    if(!container) return;
+
+    if(!events.length){
+
+        container.innerHTML = `
+            <div class="event-empty">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>No events found</h3>
+                <p>There are currently no events in this category.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = events.map(event => {
+
+        const eventDate =
+            new Date(event.event_date + 'T00:00:00');
+
+
+        const day =
+            eventDate.toLocaleDateString('en-GB',{
+                day:'2-digit'
+            });
+
+
+        const month =
+            eventDate.toLocaleDateString('en-GB',{
+                month:'short'
+            }).toUpperCase();
+
+
+        /*
+         * Determine event status
+         */
+
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        let status = 'upcoming';
+
+        if(eventDate < today){
+            status = 'past';
+        }
+
+
+        const statusText =
+            status.charAt(0).toUpperCase() +
+            status.slice(1);
+
+
+        /*
+         * Format date
+         */
+
+        const formattedDate =
+            eventDate.toLocaleDateString('en-GB',{
+                day:'2-digit',
+                month:'short',
+                year:'numeric'
+            });
+
+
+        return `
+
+            <div
+                class="event-row"
+                data-event-status="${status}"
+            >
+
+                <div class="event-date-badge">
+
+                    <div class="d">
+                        ${day}
+                    </div>
+
+                    <div class="m">
+                        ${month}
+                    </div>
+
+                </div>
+
+
+                <div class="event-row-body">
+
+                    <div class="event-row-title">
+
+                        <h3>
+                            ${escapeHTML(event.title)}
+                        </h3>
+
+                        <span
+                            class="status-badge status-${status}"
+                        >
+                            ${statusText}
+                        </span>
+
+                    </div>
+
+
+                    <div class="event-row-meta">
+
+                        <span>
+
+                            <i class="fas fa-clock"></i>
+
+                            ${formattedDate}
+
+                            ${
+                                event.event_time
+                                ? `, ${escapeHTML(event.event_time)}`
+                                : ''
+                            }
+
+                        </span>
+
+
+                        <span>
+
+                            <i class="fas fa-map-marker-alt"></i>
+
+                            ${escapeHTML(
+                                event.location || 'Location TBA'
+                            )}
+
+                        </span>
+
+                    </div>
+
+
+                    <p class="event-row-desc">
+
+                        ${escapeHTML(
+                            event.description || ''
+                        )}
+
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="btn-event-action"
+                    type="button"
+                    onclick="handleEventAction('${event.id}')"
                 >
+
+                    ${
+                        status === 'past'
+                        ? 'View Details'
+                        : 'Register Now'
+                    }
+
+                </button>
 
             </div>
 
-        `).join('');
+        `;
+
+    }).join('');
 }
 
+function setupEventFilters(events){
+
+    const buttons =
+        document.querySelectorAll(
+            '[data-event-filter]'
+        );
+
+    buttons.forEach(button => {
+
+        button.addEventListener('click', () => {
+
+            buttons.forEach(btn =>
+                btn.classList.remove('active')
+            );
+
+            button.classList.add('active');
+
+            const filter =
+                button.dataset.eventFilter;
+
+            const filtered =
+                events.filter(event => {
+
+                    const date =
+                        new Date(
+                            event.event_date + 'T00:00:00'
+                        );
+
+                    const today = new Date();
+
+                    today.setHours(0,0,0,0);
+
+                    if(filter === 'past'){
+                        return date < today;
+                    }
+
+                    if(filter === 'upcoming'){
+                        return date >= today;
+                    }
+
+                    /*
+                     * Your current database does not have
+                     * start/end dates for ongoing events.
+                     *
+                     * Until that is added, Ongoing will
+                     * remain empty.
+                     */
+
+                    if(filter === 'ongoing'){
+                        return false;
+                    }
+
+                    return true;
+
+                });
+
+            renderPublicEvents(filtered);
+
+        });
+
+    });
+}
+
+ function handleEventAction(id){
+
+    const event =
+        window.publicEvents?.find(
+            e => String(e.id) === String(id)
+        );
+
+    if(!event){
+
+        alert('Event details unavailable.');
+
+        return;
+    }
+
+    alert(
+        `Event: ${event.title}\n\n` +
+        `Please contact AESA for registration details.`
+    );
+}       
+        
 async function loadPublicAchievements(){
 
     const container =
@@ -1984,6 +2255,8 @@ async function loadPublicAchievements(){
     document.getElementById('achievement-recognitions').textContent =
         recognitions;
 }
+
+
 
 async function loadPublicResources(){
 
