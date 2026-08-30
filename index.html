@@ -1249,7 +1249,212 @@ window.addEventListener("popstate", function(event) {
             container.appendChild(row);
         });
     }
-    
+
+    async function loadPublicGallery(){
+
+    const container =
+        document.getElementById('public-gallery');
+
+    const { data, error } =
+        await supabaseClient
+            .from('gallery')
+            .select('*')
+            .order('date', { ascending:false });
+
+    if(error){
+
+        console.error('Gallery:', error);
+
+        return;
+    }
+
+    if(!data || data.length === 0){
+
+        container.innerHTML = `
+            <div class="gallery-item">
+                <i class="fas fa-image"></i>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        data.map(photo => `
+
+            <div class="gallery-item">
+
+                <img
+                    src="${escapeHTML(photo.photo_url)}"
+                    alt="${escapeHTML(photo.title)}"
+                    style="width:100%;height:100%;object-fit:cover;"
+                >
+
+            </div>
+
+        `).join('');
+}
+
+async function loadPublicAchievements(){
+
+    const container =
+        document.getElementById('public-achievements');
+
+    const { data, error } =
+        await supabaseClient
+            .from('achievements')
+            .select('*')
+            .order('date', { ascending:false });
+
+    if(error){
+
+        console.error('Achievements:', error);
+
+        return;
+    }
+
+    if(!data || data.length === 0){
+
+        container.innerHTML = `
+            <div class="achieve-card">
+                <div class="achieve-body">
+                    <h3>No achievements yet</h3>
+                    <p>Achievements will appear here.</p>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        data.map(a => `
+
+            <div class="achieve-card">
+
+                <div class="achieve-img">
+
+                    ${
+                        a.photo_url
+
+                        ? `<img
+                            src="${escapeHTML(a.photo_url)}"
+                            alt="${escapeHTML(a.title)}"
+                            style="width:100%;height:100%;object-fit:cover;"
+                           >`
+
+                        : `<i class="fas fa-trophy"
+                              style="color:#fcd34d;"></i>`
+                    }
+
+                </div>
+
+                <div class="achieve-body">
+
+                    <h3>
+                        ${escapeHTML(a.title)}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(a.desc)}
+                    </p>
+
+                    <div class="achieve-date">
+                        ${formatDate(a.date)}
+                    </div>
+
+                </div>
+
+            </div>
+
+        `).join('');
+}
+
+async function loadPublicResources(){
+
+    const container =
+        document.getElementById('public-resources');
+
+    const { data, error } =
+        await supabaseClient
+            .from('resources')
+            .select('*')
+            .order('date', { ascending:false });
+
+    if(error){
+
+        console.error('Resources:', error);
+
+        return;
+    }
+
+    if(!data || data.length === 0){
+
+        container.innerHTML = `
+            <div class="resource-row">
+                <div class="resource-body">
+                    <h3>No resources yet</h3>
+                    <p>Resources will appear here.</p>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        data.map(r => {
+
+            let icon = 'fa-file-alt';
+
+            if(r.type === 'PDF')
+                icon = 'fa-file-pdf';
+
+            if(r.type === 'PPT')
+                icon = 'fa-file-powerpoint';
+
+            if(r.type === 'ZIP')
+                icon = 'fa-file-archive';
+
+            return `
+
+                <div class="resource-row">
+
+                    <div class="resource-icon"
+                         style="background:#dbeafe;color:#1e40af;">
+
+                        <i class="fas ${icon}"></i>
+
+                    </div>
+
+                    <div class="resource-body">
+
+                        <h3>
+                            ${escapeHTML(r.title)}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(r.description || '')}
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="${escapeHTML(r.file_url)}"
+                        target="_blank"
+                        class="resource-action">
+
+                        Download
+                        <i class="fas fa-download"></i>
+
+                    </a>
+
+                </div>
+            `;
+
+        }).join('');
+}
+        
     function formatDate(dateString) {
         const date = new Date(dateString + "T00:00:00");
 
@@ -1273,6 +1478,9 @@ window.addEventListener("popstate", function(event) {
 
     loadPublicEvents();
     loadPublicNotices();
+    loadPublicGallery();
+    loadPublicAchievements();
+    loadPublicResources();
 </script>
     </body>
 </html>
