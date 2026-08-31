@@ -1733,7 +1733,7 @@ window.addEventListener("popstate", function(event) {
 
         container.innerHTML = `
             <div class="event-empty">
-                Unable to load events.
+                Unable to load events: ${escapeHTML(error.message || 'unknown error')}
             </div>
         `;
 
@@ -1865,7 +1865,7 @@ window.addEventListener("popstate", function(event) {
 
         container.innerHTML = `
             <div class="event-empty">
-                Unable to load events.
+                Unable to load events: ${escapeHTML(error.message || 'unknown error')}
             </div>
         `;
 
