@@ -1076,6 +1076,7 @@ const modalMeta = {
       {key:'date',displayLabel:'Event Date',kind:'date',required:true,group:'leftrow'},
       {key:'time',displayLabel:'Event Time',kind:'text',required:true,placeholder:'Example: 10:00 AM',group:'leftrow'},
       {key:'location',displayLabel:'Location',kind:'text',required:true,placeholder:'Example: Seminar Hall',group:'left'},
+      {key:'type',displayLabel:'Event Type',kind:'select',options:['Upcoming','Ongoing','Past'],required:true,group:'single'}
       {key:'photo',displayLabel:'Event Photo',kind:'file',required:false,accept:'image/*',hint:'PNG, JPG, JPEG (Max. 5MB)',group:'right'},
       {key:'description',displayLabel:'Description',kind:'textarea',required:false,placeholder:'Describe the event...',group:'full'},
     ]
@@ -1084,7 +1085,6 @@ const modalMeta = {
     title:'Notice', subtitle:'Fill in the details of the notice.', icon:'📌', iconBg:'#fee2e2',
     store:'notices', wide:false, addLabel:'Save Notice',
     fields:[
-      {key:'type',displayLabel:'Event Type',kind:'select',options:['Upcoming','Ongoing','Past'],required:true,group:'single'}
       {key:'title',displayLabel:'Title',kind:'text',required:true,placeholder:'Example: General Body Meeting',group:'single'},
       {key:'date',displayLabel:'Notice Date',kind:'date',required:true,group:'single'},
       {key:'description',displayLabel:'Description',kind:'textarea',required:false,placeholder:'Optional — add more details...',group:'single'},
@@ -1432,7 +1432,7 @@ async function saveModal(){
           }
           
           const eventData = {
-              title: payload.title,
+              title: payload.name,
               description: payload.description || null,
               event_date: payload.date,
               event_time: payload.time,
