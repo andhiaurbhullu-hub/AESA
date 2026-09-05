@@ -1901,10 +1901,11 @@ window.addEventListener("popstate", function(event) {
     if(!container) return;
 
     const { data, error } =
-        await supabaseClient
-            .from('events')
-            .select('*')
-            .order('event_date', { ascending:true });
+    await supabaseClient
+        .from('events')
+        .select('*')
+        .eq('type', 'upcoming')
+        .order('event_date', { ascending:true });
 
     if(error){
 
@@ -2062,16 +2063,9 @@ window.addEventListener("popstate", function(event) {
 
     const events = data || [];
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    const upcoming = events.filter(
-        event => new Date(event.event_date + 'T00:00:00') > today
-    );
-
-    renderPublicEvents(upcoming);
-
-    setupEventFilters(events);
+      renderPublicEvents(events);
+      
+      setupEventFilters();
 }
 
 function renderPublicEvents(events){
@@ -2243,7 +2237,7 @@ function renderPublicEvents(events){
     }).join('');
 }
 
-function setupEventFilters(events){
+function setupEventFilters(){
 
     const buttons =
         document.querySelectorAll(
@@ -2252,7 +2246,7 @@ function setupEventFilters(events){
 
     buttons.forEach(button => {
 
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
 
             buttons.forEach(btn =>
                 btn.classList.remove('active')
@@ -2263,36 +2257,43 @@ function setupEventFilters(events){
             const filter =
                 button.dataset.eventFilter;
 
-            const filtered =
-                events.filter(event => {
+            const container =
+                document.getElementById('public-event-list');
 
-                    const date =
-                        new Date(
-                            event.event_date + 'T00:00:00'
-                        );
+            if(!container) return;
 
-                    const today = new Date();
+            container.innerHTML = `
+                <div class="event-empty">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading events...</p>
+                </div>
+            `;
 
-                    today.setHours(0,0,0,0);
+            const { data, error } =
+                await supabaseClient
+                    .from('events')
+                    .select('*')
+                    .eq('type', filter)
+                    .order('event_date', {
+                        ascending: filter !== 'past'
+                    });
 
-                    if(filter === 'past'){
-                        return date < today;
-                    }
+            if(error){
 
-                    if(filter === 'upcoming'){
-                        return date > today;
-                    }
+                console.error('Events:', error);
 
-                    if(filter === 'ongoing'){
-                        return false;
-                    }
+                container.innerHTML = `
+                    <div class="event-empty">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Unable to load events</h3>
+                        <p>${escapeHTML(error.message || 'Unknown error')}</p>
+                    </div>
+                `;
 
-                    return true;
+                return;
+            }
 
-                });
-
-            renderPublicEvents(filtered);
-
+            renderPublicEvents(data || []);
         });
 
     });
