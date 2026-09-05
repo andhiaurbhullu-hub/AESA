@@ -1543,13 +1543,29 @@
 
   <div class="content-section">
 
-    <div class="tabs">
-      <button class="tab-btn active">All</button>
-      <button class="tab-btn">Events</button>
-      <button class="tab-btn">Workshops</button>
-      <button class="tab-btn">Competitions</button>
-      <button class="tab-btn">Celebrations</button>
-    </div>
+    <div class="tabs announcement-tabs">
+
+    <button class="tab-btn active" data-announcement-filter="all">
+        All
+    </button>
+
+    <button class="tab-btn" data-announcement-filter="notice">
+        Notices
+    </button>
+
+    <button class="tab-btn" data-announcement-filter="event">
+        Events
+    </button>
+
+    <button class="tab-btn" data-announcement-filter="result">
+        Results
+    </button>
+
+    <button class="tab-btn" data-announcement-filter="update">
+        Updates
+    </button>
+
+</div>
 
     <div class="gallery-grid" id="public-gallery"></div>
 
@@ -2308,60 +2324,156 @@ async function loadPublicNotices(){
         await supabaseClient
             .from('notices')
             .select('*')
-            .eq('status', 'Published')
             .order('date', { ascending:false });
 
     if(error){
 
         console.error('Notices:', error);
         return;
+
     }
 
-    if(!data || data.length === 0){
+    const announcements = data || [];
 
-        container.innerHTML = `
-            <div class="event-empty">
-                <i class="fas fa-bullhorn"></i>
-                <h3>No notices yet</h3>
-                <p>Announcements will appear here.</p>
-            </div>
-        `;
+    function renderAnnouncements(filter = 'all'){
 
-        return;
-    }
+        const filtered =
+            filter === 'all'
+                ? announcements
+                : announcements.filter(
+                    item => item.type === filter
+                );
 
-    container.innerHTML =
-        data.map(n => {
+        if(filtered.length === 0){
 
-            const date = new Date(n.date + 'T00:00:00');
+            container.innerHTML = `
+                <div class="event-empty">
 
-            const day = date.toLocaleDateString('en-GB', { day:'2-digit' });
-            const month = date.toLocaleDateString('en-GB', { month:'short' }).toUpperCase();
+                    <i class="fas fa-bullhorn"></i>
 
-            return `
+                    <h3>No announcements yet</h3>
 
-                <div class="notice-row">
-
-                    <div class="notice-date">
-                        <div class="d">${day}</div>
-                        <div class="m">${month}</div>
-                    </div>
-
-                    <div class="notice-body">
-
-                        <div class="notice-title-row">
-                            <h3>${escapeHTML(n.title)}</h3>
-                            <span class="notice-badge badge-notice">Notice</span>
-                        </div>
-
-                        <p class="notice-desc">${escapeHTML(n.description || '')}</p>
-
-                    </div>
+                    <p>
+                        There are no announcements in this category.
+                    </p>
 
                 </div>
             `;
 
-        }).join('');
+            return;
+        }
+
+        container.innerHTML =
+            filtered.map(n => {
+
+                const date =
+                    new Date(n.date + 'T00:00:00');
+
+                const day =
+                    date.toLocaleDateString(
+                        'en-GB',
+                        {day:'2-digit'}
+                    );
+
+                const month =
+                    date.toLocaleDateString(
+                        'en-GB',
+                        {month:'short'}
+                    ).toUpperCase();
+
+                const typeLabel =
+                    n.type === 'event'
+                        ? 'Event'
+                        : n.type === 'result'
+                        ? 'Result'
+                        : n.type === 'update'
+                        ? 'Update'
+                        : 'Notice';
+
+                return `
+
+                    <div class="notice-row">
+
+                        <div class="notice-date">
+
+                            <div class="d">
+                                ${day}
+                            </div>
+
+                            <div class="m">
+                                ${month}
+                            </div>
+
+                        </div>
+
+
+                        <div class="notice-body">
+
+                            <div class="notice-title-row">
+
+                                <h3>
+                                    ${escapeHTML(n.title)}
+                                </h3>
+
+                                <span class="notice-badge badge-${n.type}">
+                                    ${typeLabel}
+                                </span>
+
+                            </div>
+
+
+                            ${
+                                n.description
+                                ? `
+                                    <p class="notice-desc">
+                                        ${escapeHTML(n.description)}
+                                    </p>
+                                  `
+                                : ''
+                            }
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }).join('');
+
+    }
+
+
+    /* BUTTON FILTERING */
+
+    const buttons =
+        document.querySelectorAll(
+            '[data-announcement-filter]'
+        );
+
+    buttons.forEach(button => {
+
+        button.addEventListener('click', () => {
+
+            buttons.forEach(btn =>
+                btn.classList.remove('active')
+            );
+
+            button.classList.add('active');
+
+            const filter =
+                button.dataset.announcementFilter;
+
+            renderAnnouncements(filter);
+
+        });
+
+    });
+
+
+    /* SHOW ALL BY DEFAULT */
+
+    renderAnnouncements('all');
+
 }
 
 async function loadPublicGallery(){
