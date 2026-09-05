@@ -1084,8 +1084,8 @@ const modalMeta = {
     fields:[
       {key:'title',displayLabel:'Title',kind:'text',required:true,placeholder:'Example: General Body Meeting',group:'single'},
       {key:'date',displayLabel:'Notice Date',kind:'date',required:true,group:'single'},
-      {key:'description',displayLabel:'Description',kind:'textarea',required:true,placeholder:'Write the notice details...',group:'single'},
-      {key:'status',displayLabel:'Status',kind:'select',options:['Published','Archived'],required:false,group:'single'},
+      {key:'description',displayLabel:'Description',kind:'textarea',required:false,placeholder:'Optional — add more details...',group:'single'},
+      {key:'type',displayLabel:'Announcement Type',kind:'select',options:['Notice','Event','Result','Update'],required:true,group:'single'},
     ]
   },
   photo:{
@@ -1469,8 +1469,8 @@ async function saveModal(){
             const noticeData = {
                 title: payload.title,
                 date: payload.date,
-                description: payload.description,
-                status: payload.status || 'Published'
+                description: payload.description || null,
+                type: (payload.type || 'Notice').toLowerCase()
             };
 
             let result;
