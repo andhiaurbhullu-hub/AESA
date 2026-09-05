@@ -2066,7 +2066,7 @@ window.addEventListener("popstate", function(event) {
     today.setHours(0,0,0,0);
 
     const upcoming = events.filter(
-        event => new Date(event.event_date + 'T00:00:00') >= today
+        event => new Date(event.event_date + 'T00:00:00') > today
     );
 
     renderPublicEvents(upcoming);
@@ -2280,16 +2280,8 @@ function setupEventFilters(events){
                     }
 
                     if(filter === 'upcoming'){
-                        return date >= today;
+                        return date > today;
                     }
-
-                    /*
-                     * Your current database does not have
-                     * start/end dates for ongoing events.
-                     *
-                     * Until that is added, Ongoing will
-                     * remain empty.
-                     */
 
                     if(filter === 'ongoing'){
                         return false;
