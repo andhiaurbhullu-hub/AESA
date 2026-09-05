@@ -1583,13 +1583,29 @@
     <p>Stay updated with the latest updates and important information.</p>
   </div>
   <div class="content-section">
-    <div class="tabs">
-      <button class="tab-btn active">All</button>
-      <button class="tab-btn">Notices</button>
-      <button class="tab-btn">Events</button>
-      <button class="tab-btn">Results</button>
-      <button class="tab-btn">Updates</button>
-    </div>
+    <div class="tabs announcement-tabs">
+
+  <button class="tab-btn active" data-announcement-filter="all">
+    All
+  </button>
+
+  <button class="tab-btn" data-announcement-filter="notice">
+    Notices
+  </button>
+
+  <button class="tab-btn" data-announcement-filter="event">
+    Events
+  </button>
+
+  <button class="tab-btn" data-announcement-filter="result">
+    Results
+  </button>
+
+  <button class="tab-btn" data-announcement-filter="update">
+    Updates
+  </button>
+
+</div>
     <div class="notice-list" id="public-notices">
     </div>
     <a href="#" class="view-all-link">View All Notices <i class="fas fa-arrow-right"></i></a>
