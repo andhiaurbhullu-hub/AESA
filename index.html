@@ -1924,8 +1924,11 @@ window.addEventListener("popstate", function(event) {
     today.setHours(0,0,0,0);
 
     const upcoming = (data || [])
-        .filter(event => new Date(event.event_date + 'T00:00:00') >= today)
-        .slice(0, 3);
+    .filter(event => event.type === 'upcoming')
+    .sort((a, b) =>
+        new Date(a.event_date) - new Date(b.event_date)
+    )
+    .slice(0, 3);
 
     if(upcoming.length === 0){
 
