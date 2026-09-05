@@ -845,7 +845,9 @@ function renderNotices(){
         <td>${i+1}</td>
         <td style="font-weight:600;color:#0f172a">${n.title}</td>
         <td>${fmtDate(n.date)}</td>
-        <td><span class="badge ${n.status.toLowerCase()}">${n.status}</span></td>
+        <td><span class="badge ${n.type.toLowerCase()}">
+              ${n.type.charAt(0).toUpperCase() + n.type.slice(1)}
+            </span></td>
         <td>
           <button class="icon-btn edit" onclick="openModal('notice',${n.id})">${editSvg()}</button>
           <button class="icon-btn del" onclick="removeItem('notices',${n.id})">${delSvg()}</button>
