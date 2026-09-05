@@ -1419,13 +1419,27 @@ async function saveModal(){
 
         if(kind === 'event'){
 
-            const eventData = {
-                title: payload.name,
-                description: payload.description,
-                event_date: payload.date,
-                event_time: payload.time,
-                location: payload.location
-            };
+           let uploaded = null;
+
+          if(payload.photo && payload.photo.dataUrl){
+              uploaded = await uploadToStorage(
+                  payload.photo,
+                  'events'
+              );
+          }
+          
+          const eventData = {
+              title: payload.name,
+              description: payload.description,
+              event_date: payload.date,
+              event_time: payload.time,
+              location: payload.location
+          };
+          
+          if(uploaded){
+              eventData.photo_url = uploaded.url;
+              eventData.photo_path = uploaded.path;
+          }
 
             let result;
 
