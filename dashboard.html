@@ -1470,7 +1470,7 @@ async function saveModal(){
                 title: payload.title,
                 date: payload.date,
                 description: payload.description || null,
-                type: (payload.type || 'Notice').toLowerCase()
+                type: String(payload.type || 'Notice').toLowerCase()
             };
 
             let result;
