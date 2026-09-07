@@ -1905,7 +1905,8 @@ window.addEventListener("popstate", function(event) {
         .from('events')
         .select('*')
         .eq('type', 'upcoming')
-        .order('event_date', { ascending:true });
+        .order('event_date', { ascending:true })
+        .limit(3);
 
     if(error){
 
@@ -1920,17 +1921,7 @@ window.addEventListener("popstate", function(event) {
         return;
     }
 
-    const today = new Date();
-    today.setHours(0,0,0,0);
-
-    const upcoming = (data || [])
-    .filter(event => event.type === 'upcoming')
-    .sort((a, b) =>
-        new Date(a.event_date) - new Date(b.event_date)
-    )
-    .slice(0, 3);
-
-    if(upcoming.length === 0){
+    if(!data || data.length === 0){
 
         container.innerHTML = `
             <div class="event-empty">
@@ -1944,7 +1935,7 @@ window.addEventListener("popstate", function(event) {
     }
 
     container.innerHTML =
-        upcoming.map(event => {
+        data.map(event => {
 
             const date =
                 new Date(event.event_date + 'T00:00:00');
@@ -2049,26 +2040,17 @@ window.addEventListener("popstate", function(event) {
         await supabaseClient
             .from('events')
             .select('*')
+            .eq('type', 'upcoming')
             .order('event_date', { ascending:true });
 
     if(error){
-
         console.error('Events:', error);
-
-        container.innerHTML = `
-            <div class="event-empty">
-                Unable to load events: ${escapeHTML(error.message || 'unknown error')}
-            </div>
-        `;
-
         return;
     }
 
-    const events = data || [];
+    renderPublicEvents(data || []);
 
-      renderPublicEvents(events);
-      
-      setupEventFilters();
+    setupEventFilters();
 }
 
 function renderPublicEvents(events){
@@ -2114,16 +2096,9 @@ function renderPublicEvents(events){
          * Determine event status
          */
 
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        let status = 'upcoming';
-
-        if(eventDate < today){
-            status = 'past';
-        }
-
-
+        const status =
+            String(event.type || 'upcoming').toLowerCase();
+        
         const statusText =
             status.charAt(0).toUpperCase() +
             status.slice(1);
@@ -2243,9 +2218,7 @@ function renderPublicEvents(events){
 function setupEventFilters(){
 
     const buttons =
-        document.querySelectorAll(
-            '[data-event-filter]'
-        );
+        document.querySelectorAll('[data-event-filter]');
 
     buttons.forEach(button => {
 
@@ -2260,18 +2233,6 @@ function setupEventFilters(){
             const filter =
                 button.dataset.eventFilter;
 
-            const container =
-                document.getElementById('public-event-list');
-
-            if(!container) return;
-
-            container.innerHTML = `
-                <div class="event-empty">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <p>Loading events...</p>
-                </div>
-            `;
-
             const { data, error } =
                 await supabaseClient
                     .from('events')
@@ -2282,21 +2243,12 @@ function setupEventFilters(){
                     });
 
             if(error){
-
                 console.error('Events:', error);
-
-                container.innerHTML = `
-                    <div class="event-empty">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <h3>Unable to load events</h3>
-                        <p>${escapeHTML(error.message || 'Unknown error')}</p>
-                    </div>
-                `;
-
                 return;
             }
 
             renderPublicEvents(data || []);
+
         });
 
     });
