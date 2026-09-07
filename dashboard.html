@@ -1137,28 +1137,28 @@ function fileIconSvg(){return `<svg viewBox="0 0 24 24" fill="none" stroke="curr
 function renderField(f, value){
   value = (value===undefined || value===null) ? '' : value;
   const req = f.required ? '<span class="required">*</span>' : '';
+
   if(f.kind==='textarea'){
     return `<div class="field" data-field="${f.key}"><label>${f.displayLabel}${req}</label><textarea id="mf-${f.key}" placeholder="${f.placeholder||''}">${escapeHtml(value)}</textarea></div>`;
+  }
+
   if(f.kind==='select'){
     const normalizedValue = String(value || '').toLowerCase();
 
     return `
-        <div class="field" data-field="${f.key}">
-            <label>${f.displayLabel}${req}</label>
-
-            <select id="mf-${f.key}">
-                ${f.options.map(o => `
-                    <option
-                        value="${o}"
-                        ${o.toLowerCase() === normalizedValue ? 'selected' : ''}
-                    >
-                        ${o}
-                    </option>
-                `).join('')}
-            </select>
-        </div>
+      <div class="field" data-field="${f.key}">
+        <label>${f.displayLabel}${req}</label>
+        <select id="mf-${f.key}">
+          ${f.options.map(o => `
+            <option value="${o}" ${o.toLowerCase() === normalizedValue ? 'selected' : ''}>
+              ${o}
+            </option>
+          `).join('')}
+        </select>
+      </div>
     `;
-}
+  }
+
   return `<div class="field" data-field="${f.key}"><label>${f.displayLabel}${req}</label><input id="mf-${f.key}" type="${f.kind}" placeholder="${f.placeholder||''}" value="${escapeHtml(value)}"></div>`;
 }
 
