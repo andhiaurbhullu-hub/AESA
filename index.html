@@ -1309,7 +1309,8 @@
     }
 
 }
-  </style>
+  .gallery-group{margin-bottom:28px}.gallery-group-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:12px}.gallery-group-head h2{font-size:18px}.gallery-group-head p{font-size:12px;color:var(--muted);margin-top:3px}.gallery-group-grid .gallery-item{border:0;padding:0;cursor:pointer}.gallery-group:not(.expanded) .gallery-group-grid .gallery-item:nth-child(n+6){display:none}.gallery-toggle{white-space:nowrap}.gallery-lightbox{position:fixed;inset:0;background:rgba(15,23,42,.9);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}.gallery-lightbox.open{display:flex}.gallery-lightbox img{max-width:90vw;max-height:82vh;object-fit:contain}.gallery-lightbox button{position:absolute;border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:50%;width:42px;height:42px;font-size:20px;cursor:pointer}.gallery-lightbox .lb-close{top:20px;right:20px}.gallery-lightbox .lb-prev{left:20px}.gallery-lightbox .lb-next{right:20px}.gallery-lightbox .lb-download{bottom:20px;right:20px;border-radius:22px;width:auto;padding:0 16px;font-size:14px}
+</style>
 </head>
 <body>
 
@@ -1543,35 +1544,19 @@
 
   <div class="content-section">
 
-    <div class="tabs announcement-tabs">
-
-    <button class="tab-btn active" data-announcement-filter="all">
-        All
-    </button>
-
-    <button class="tab-btn" data-announcement-filter="notice">
-        Notices
-    </button>
-
-    <button class="tab-btn" data-announcement-filter="event">
-        Events
-    </button>
-
-    <button class="tab-btn" data-announcement-filter="result">
-        Results
-    </button>
-
-    <button class="tab-btn" data-announcement-filter="update">
-        Updates
-    </button>
-
-</div>
-
     <div class="gallery-grid" id="public-gallery"></div>
 
   </div>
 
 </section>
+
+<div class="gallery-lightbox" id="gallery-lightbox" onclick="if(event.target===this)closeGalleryLightbox()">
+  <button class="lb-close" type="button" onclick="closeGalleryLightbox()" aria-label="Close">&times;</button>
+  <button class="lb-prev" type="button" onclick="moveGalleryPhoto(-1)" aria-label="Previous">&#10094;</button>
+  <img src="" alt="Expanded gallery photo">
+  <button class="lb-next" type="button" onclick="moveGalleryPhoto(1)" aria-label="Next">&#10095;</button>
+  <a class="lb-download" href="#" download target="_blank">Download</a>
+</div>
 
 
 <!-- ═══════════════════════════════════════════
@@ -1782,11 +1767,9 @@
   <div class="content-section soft">
     <div class="section-heading">RESOURCES</div>
     <p class="section-sub">Useful materials, documents and links to help you learn and grow.</p>
-    <div class="tabs">
-      <button class="tab-btn active">Study Materials</button>
-      <button class="tab-btn">Documents</button>
-      <button class="tab-btn">Useful Links</button>
-      <button class="tab-btn">Templates</button>
+    <div class="tabs resource-tabs">
+      <button class="tab-btn active" data-resource-filter="Results">Results</button>
+      <button class="tab-btn" data-resource-filter="Study Materials">Study Materials</button>
     </div>
     <div class="resource-list" id="public-resources"></div>
     <a href="#" class="view-all-link">View All Resources <i class="fas fa-arrow-right"></i></a>
@@ -1904,9 +1887,8 @@ window.addEventListener("popstate", function(event) {
     await supabaseClient
         .from('events')
         .select('*')
-        .eq('type', 'upcoming')
         .order('event_date', { ascending:true })
-        .limit(3);
+        ;
 
     if(error){
 
@@ -1921,7 +1903,8 @@ window.addEventListener("popstate", function(event) {
         return;
     }
 
-    if(!data || data.length === 0){
+    const upcoming = (data || []).map(addCalculatedEventStatus).filter(e => e.calculatedStatus === 'upcoming').slice(0,3);
+    if(!upcoming.length){
 
         container.innerHTML = `
             <div class="event-empty">
@@ -1935,7 +1918,7 @@ window.addEventListener("popstate", function(event) {
     }
 
     container.innerHTML =
-        data.map(event => {
+        upcoming.map(event => {
 
             const date =
                 new Date(event.event_date + 'T00:00:00');
@@ -2029,6 +2012,27 @@ window.addEventListener("popstate", function(event) {
         }).join('');
 }
 
+function parseIndiaDateTime(dateValue, timeValue, fallbackHour = 0){
+    if(!dateValue) return null;
+    const date = String(dateValue).slice(0,10);
+    let time = String(timeValue || '').trim().toUpperCase();
+    let m = time.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/);
+    let hour = m ? Number(m[1]) : fallbackHour, minute = m && m[2] ? Number(m[2]) : 0;
+    if(m && m[3] === 'PM' && hour < 12) hour += 12;
+    if(m && m[3] === 'AM' && hour === 12) hour = 0;
+    return new Date(`${date}T${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}:00+05:30`);
+}
+function calculateEventStatus(event){
+    const start = parseIndiaDateTime(event.event_date, event.event_time, 0);
+    const end = parseIndiaDateTime(event.event_date, event.end_time || event.event_end_time, event.event_time ? 23 : 23);
+    if(!start) return 'upcoming';
+    const now = new Date();
+    if(now < start) return 'upcoming';
+    if(now < end) return 'ongoing';
+    return 'past';
+}
+function addCalculatedEventStatus(event){ return {...event, calculatedStatus: calculateEventStatus(event)}; }
+
         async function loadPublicEvents(){
 
     const container =
@@ -2040,7 +2044,6 @@ window.addEventListener("popstate", function(event) {
         await supabaseClient
             .from('events')
             .select('*')
-            .eq('type', 'upcoming')
             .order('event_date', { ascending:true });
 
     if(error){
@@ -2048,7 +2051,8 @@ window.addEventListener("popstate", function(event) {
         return;
     }
 
-    renderPublicEvents(data || []);
+    window.publicEvents = (data || []).map(addCalculatedEventStatus);
+    renderPublicEvents(window.publicEvents.filter(e => e.calculatedStatus === 'upcoming').slice(0,3));
 
     setupEventFilters();
 }
@@ -2096,8 +2100,7 @@ function renderPublicEvents(events){
          * Determine event status
          */
 
-        const status =
-            String(event.type || 'upcoming').toLowerCase();
+        const status = event.calculatedStatus || calculateEventStatus(event);
         
         const statusText =
             status.charAt(0).toUpperCase() +
@@ -2237,7 +2240,6 @@ function setupEventFilters(){
                 await supabaseClient
                     .from('events')
                     .select('*')
-                    .eq('type', filter)
                     .order('event_date', {
                         ascending: filter !== 'past'
                     });
@@ -2247,7 +2249,8 @@ function setupEventFilters(){
                 return;
             }
 
-            renderPublicEvents(data || []);
+            window.publicEvents = (data || []).map(addCalculatedEventStatus);
+            renderPublicEvents(window.publicEvents.filter(e => e.calculatedStatus === filter));
 
         });
 
@@ -2469,17 +2472,49 @@ async function loadPublicGallery(){
         return;
     }
 
-    container.innerHTML =
-        data.map(g => `
-            <div class="gallery-item">
-                ${
-                    g.photo_url
-                    ? `<img src="${escapeHTML(g.photo_url)}" alt="${escapeHTML(g.title || '')}">`
-                    : `<i class="fas fa-image"></i>`
-                }
-            </div>
-        `).join('');
+    const groups = data.reduce((out, photo) => {
+        const key = `${photo.title || 'Untitled album'}|${photo.date || ''}`;
+        (out[key] ||= { title: photo.title || 'Untitled album', date: photo.date, photos: [] }).photos.push(photo);
+        return out;
+    }, {});
+    window.publicGalleryGroups = Object.values(groups);
+    renderPublicGallery();
 }
+
+function renderPublicGallery(){
+    const container = document.getElementById('public-gallery');
+    if(!container) return;
+    container.innerHTML = (window.publicGalleryGroups || []).map((group, index) => `
+      <section class="gallery-group" data-gallery-group="${index}">
+        <div class="gallery-group-head"><div><h2>${escapeHTML(group.title)}</h2><p>${group.date ? formatDate(group.date) : 'Date not specified'} · ${group.photos.length} photo${group.photos.length === 1 ? '' : 's'}</p></div>
+        <button class="tab-btn gallery-toggle" type="button" onclick="toggleGalleryGroup(${index})">View All</button></div>
+        <div class="gallery-grid gallery-group-grid">${group.photos.map((g, photoIndex) => g.photo_url ? `<button class="gallery-item" type="button" onclick="openGalleryLightbox(${index},${photoIndex})"><img src="${escapeHTML(g.photo_url)}" alt="${escapeHTML(g.title || 'Gallery photo')}"></button>` : '').join('')}</div>
+      </section>`).join('');
+}
+function toggleGalleryGroup(index){
+    const group = document.querySelector(`[data-gallery-group="${index}"]`);
+    if(!group) return;
+    const expanded = group.classList.toggle('expanded');
+    group.querySelector('.gallery-toggle').textContent = expanded ? 'Collapse' : 'View All';
+}
+function openGalleryLightbox(groupIndex, photoIndex){
+    const group = window.publicGalleryGroups[groupIndex];
+    if(!group) return;
+    const photo = group.photos[photoIndex];
+    const overlay = document.getElementById('gallery-lightbox');
+    overlay.dataset.group = groupIndex; overlay.dataset.photo = photoIndex;
+    overlay.querySelector('img').src = photo.photo_url;
+    overlay.querySelector('.lb-download').href = photo.photo_url;
+    overlay.classList.add('open');
+}
+function moveGalleryPhoto(step){
+    const overlay = document.getElementById('gallery-lightbox');
+    const group = window.publicGalleryGroups[Number(overlay.dataset.group)];
+    let index = Number(overlay.dataset.photo) + step;
+    if(!group || index < 0 || index >= group.photos.length) return;
+    openGalleryLightbox(Number(overlay.dataset.group), index);
+}
+function closeGalleryLightbox(){ document.getElementById('gallery-lightbox')?.classList.remove('open'); }
 
 async function loadPublicAchievements(){
 
@@ -2606,6 +2641,14 @@ async function loadPublicResources(){
     const container =
         document.getElementById('public-resources');
 
+    document.querySelectorAll('[data-resource-filter]').forEach(button => {
+        button.onclick = () => {
+            document.querySelectorAll('[data-resource-filter]').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+            renderPublicResources(button.dataset.resourceFilter);
+        };
+    });
+
     const { data, error } =
         await supabaseClient
             .from('resources')
@@ -2616,25 +2659,22 @@ async function loadPublicResources(){
 
         console.error('Resources:', error);
 
+        window.publicResources = [];
+        container.innerHTML = `<div class="resource-row"><div class="resource-body"><h3>Unable to load resources</h3><p>${escapeHTML(error.message || 'Please try again later.')}</p></div></div>`;
         return;
     }
 
-    if(!data || data.length === 0){
+    window.publicResources = data || [];
 
-        container.innerHTML = `
-            <div class="resource-row">
-                <div class="resource-body">
-                    <h3>No resources yet</h3>
-                    <p>Resources will appear here.</p>
-                </div>
-            </div>
-        `;
-
-        return;
-    }
-
+    renderPublicResources('Results');
+}
+function resourceCategory(r){ return ['Results','Study Materials'].includes(r.type) ? r.type : 'Study Materials'; }
+function renderPublicResources(category){
+    const container = document.getElementById('public-resources');
+    const rows = (window.publicResources || []).filter(r => resourceCategory(r) === category);
+    if(!rows.length){ container.innerHTML = `<div class="resource-row"><div class="resource-body"><h3>No ${escapeHTML(category)} resources yet</h3><p>Resources will appear here.</p></div></div>`; return; }
     container.innerHTML =
-        data.map(r => {
+        rows.map(r => {
 
             let icon = 'fa-file-alt';
 
