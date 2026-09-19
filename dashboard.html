@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AESA Admin Panel</title>
+<link rel="icon" type="image/jpeg" href="aesalogo.jpg.jpeg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -77,6 +78,7 @@
     flex-shrink:0;
     box-shadow:0 4px 14px -4px rgba(59,130,246,.6);
   }
+  .brand-mark img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block}
   .brand-text{line-height:1.2;}
   .brand-text .name{font-family:var(--font-display);font-weight:700;font-size:14px;color:#fff;}
   .brand-text .sub{font-size:10.5px;color:var(--slate-400);}
@@ -251,7 +253,7 @@
   .pg-btn:disabled{opacity:.4;cursor:default;}
 
   /* ---------- DASHBOARD ---------- */
-  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:18px 0 20px;}
   .stat-card{
     background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);
     padding:18px 18px;display:flex;align-items:center;gap:13px;
@@ -284,18 +286,13 @@
   }
   .quick-action .qa-icon svg{width:15px;height:15px;}
   .quick-action span{font-size:13px;font-weight:600;color:var(--ink);}
-
-  .activity-item{
-    display:flex;gap:11px;padding:11px 0;
-    border-bottom:1px solid #f1f4f9;
-  }
-  .activity-item:last-child{border-bottom:none;}
-  .activity-dot{
-    width:7px;height:7px;border-radius:50%;background:var(--blue-500);
-    margin-top:6px;flex-shrink:0;
-  }
-  .activity-text{font-size:13px;color:var(--ink);line-height:1.4;}
-  .activity-time{font-size:11px;color:var(--slate-400);margin-top:2px;}
+  .management-overview .card-header{margin-bottom:4px}
+  .thought-card{position:relative;overflow:hidden;background:linear-gradient(135deg,#0b1435 0%,#172a5a 100%);color:#fff;border:0}
+  .thought-card:after{content:'✦';position:absolute;right:22px;bottom:-18px;color:rgba(96,165,250,.18);font-size:110px;line-height:1}
+  .thought-card h2{color:#fff}
+  .thought-card .card-subtitle{color:#a9c6ef}
+  .thought-quote{position:relative;z-index:1;margin:18px 0 8px;font-family:var(--font-display);font-size:20px;line-height:1.35;font-weight:700;letter-spacing:.01em}
+  .thought-credit{position:relative;z-index:1;color:#7dd3fc;font-size:11px;text-transform:uppercase;letter-spacing:.14em}
 
   /* ---------- GALLERY ---------- */
   .gallery-grid{
@@ -399,7 +396,6 @@
     display:flex;align-items:center;gap:9px;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  .toast .dot{width:7px;height:7px;border-radius:50%;background:#4ade80;}
 
   .empty-state{
     text-align:center;padding:40px 20px;color:var(--slate-400);font-size:13.5px;
@@ -469,6 +465,22 @@
     .stat-grid{grid-template-columns:1fr 1fr;}
     .gallery-grid{grid-template-columns:1fr 1fr;}
   }
+@keyframes dashFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dashFadeIn{from{opacity:0}to{opacity:1}}
+.section.active{animation:dashFadeIn .3s ease both}.section.active .card,.section.active .topbar{animation:dashFadeUp .4s ease both}
+.stat-card,.quick-action,.card,.gallery-item,.modal{transition:transform .22s ease,box-shadow .22s ease}.stat-card:hover,.quick-action:hover,.gallery-item:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.12)}
+.btn-primary,.icon-btn,.nav-item{transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 7px 16px rgba(37,99,235,.22)}
+.modal-overlay{transition:opacity .25s ease}.toast{animation:dashFadeUp .3s ease both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  .sidebar{transition:box-shadow .25s ease}.sidebar:hover{box-shadow:8px 0 28px rgba(15,23,42,.12)}
+  .btn-primary,.quick-action,.icon-btn,.nav-item{position:relative;overflow:hidden}.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.4);transform:scale(0);animation:dashRipple .6s linear;pointer-events:none}@keyframes dashRipple{to{transform:scale(4);opacity:0}}
+  .card,.quick-action,.stat-card{transition:transform .24s ease,box-shadow .24s ease}.card:hover{box-shadow:0 14px 32px rgba(15,23,42,.1)}.quick-action:hover{transform:translateY(-4px)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.13)}
+  @media (max-width:1024px){.main{margin-left:0}.sidebar{width:230px}.topbar{padding:18px 22px}.card{margin:0 22px}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:700px){.topbar{padding:14px 16px;gap:10px}.topbar-left h1{font-size:20px}.topbar-left p{font-size:11px}.user-chip{max-width:42px}.chip-text{display:none}.card{margin:0 12px;border-radius:10px}.welcome-card{margin-bottom:0}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.stat-card{padding:14px 8px}.quick-actions{grid-template-columns:1fr 1fr!important;gap:10px}.quick-action{min-height:92px;padding:12px 8px}.table-wrap,div[style*="overflow-x:auto"]{overflow-x:auto;-webkit-overflow-scrolling:touch}table{min-width:680px}.modal-overlay{padding:10px}.modal{width:100%;max-width:100%;max-height:92vh;overflow:auto;border-radius:12px}.form-grid-2,.form-grid-plain{grid-template-columns:1fr!important}.field-row{flex-direction:column}.field-row .field{width:100%}.dropzone{min-height:150px}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.gallery-item{min-height:130px}.sidebar{width:min(280px,86vw)}.pagination{padding:12px 14px}.toast{left:12px;right:12px;bottom:18px;width:auto}}
+  @media (max-width:380px){.quick-actions{grid-template-columns:1fr!important}.gallery-grid{grid-template-columns:1fr 1fr}.topbar-left h1{font-size:18px}}
+  @media (hover:none),(pointer:coarse){.btn-primary:active,.quick-action:active,.icon-btn:active,.nav-item:active{transform:scale(.96)}.section.active .card,.section.active .quick-action,.section.active .stat-card{animation:dashMobileRise .5s ease both}.section.active .quick-action:nth-child(2){animation-delay:.08s}.section.active .quick-action:nth-child(3){animation-delay:.16s}}
+  @keyframes dashMobileRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -477,8 +489,8 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <button class="sidebar-close" onclick="closeSidebar()">✕</button>
-    <div class="brand">
-      <div class="brand-mark">A</div>
+    <div class="brand" role="button" tabindex="0" aria-label="Open public home page" onclick="window.location.href='index.html'" onkeydown="if(event.key==='Enter'||event.key===' ')window.location.href='index.html'" style="cursor:pointer">
+      <div class="brand-mark"><img src="aesalogo.jpg.jpeg" alt="AESA logo"></div>
       <div class="brand-text">
         <div class="name">AESA</div>
         <div class="sub">Aeronautical Engineering<br>Student Association</div>
@@ -512,7 +524,7 @@
     </button>
 
     <div class="sidebar-spacer"></div>
-    <button class="logout-btn" onclick="showToast('Logged out')">
+    <button class="logout-btn" type="button" onclick="logoutAdmin()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
       Logout
     </button>
@@ -562,10 +574,10 @@
             <span>Upload Resource</span>
           </button>
         </div>
-
-        <div class="card">
-          <div class="card-header"><div><h2>Recent Activity</h2></div></div>
-          <div id="activity-list"></div>
+        <div class="card thought-card management-overview">
+          <div class="card-header"><div><h2>Thought of the Day</h2><p class="card-subtitle">A little inspiration for every AESA innovator.</p></div></div>
+          <p class="thought-quote">“The engine is the heart of an aeroplane, but the pilot is its soul.”</p>
+          <div class="thought-credit">— Walter Raleigh</div>
         </div>
       </div>
     </section>
@@ -661,7 +673,7 @@
         </div>
         <div style="overflow-x:auto">
           <table>
-            <thead><tr><th>#</th><th>Title</th><th>Description</th><th>Date</th><th>Actions</th></tr></thead>
+            <thead><tr><th>#</th><th>Title</th><th>Description</th><th>Photo</th><th>Date</th><th>Actions</th></tr></thead>
             <tbody id="tbl-achievements"></tbody>
           </table>
         </div>
@@ -703,7 +715,7 @@
   <div class="modal" id="modal-box"></div>
 </div>
 
-<div class="toast" id="toast"><span class="dot"></span><span id="toast-text"></span></div>
+<div class="toast" id="toast"><span id="toast-text"></span></div>
 
 <script>
 
@@ -729,7 +741,6 @@ let data = {
   gallery: [],
   achievements: [],
   resources: [],
-  activity: []
 };
 
 function fmtDate(iso){
@@ -751,6 +762,12 @@ async function checkLogin() {
     }
 
     return session;
+}
+
+async function logoutAdmin(){
+  const { error } = await supabaseClient.auth.signOut();
+  if(error){ showToast(error.message || 'Logout failed'); return; }
+  window.location.href = 'admin.html';
 }
 
 function showAdmin(session) {
@@ -801,17 +818,6 @@ function renderDashboard(){
       <div><div class="stat-num">${s.num}</div><div class="stat-label">${s.label}</div></div>
     </div>
   `).join('');
-  document.getElementById('activity-list').innerHTML = data.activity.map(a=>`
-    <div class="activity-item">
-      <div class="activity-dot"></div>
-      <div><div class="activity-text">${a.text}</div><div class="activity-time">${a.time}</div></div>
-    </div>
-  `).join('');
-}
-
-function logActivity(text){
-  data.activity.unshift({text, time:"just now"});
-  data.activity = data.activity.slice(0,6);
 }
 
 /* ============ RENDER: EVENTS ============ */
@@ -920,7 +926,7 @@ function renderAchievements(){
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="5">
+                <td colspan="6">
                     <div class="empty-state">
                         No achievements yet.
                     </div>
@@ -944,6 +950,8 @@ function renderAchievements(){
                     <td>
                         ${escapeHtml(a.description)}
                     </td>
+
+                    <td>${a.photo_url ? '<span style="color:#16a34a;font-weight:600">Attached</span>' : '<span style="color:#94a3b8">None</span>'}</td>
 
                     <td>
                         ${fmtDate(a.date)}
@@ -1051,6 +1059,17 @@ function dlSvg(){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 
 async function removeItem(type, id){
 
+  if(!window.confirm('Are you sure you want to delete this item? This cannot be undone.')) return;
+
+  const fileColumn = type === 'gallery' ? 'photo_path' : type === 'resources' ? 'file_path' : null;
+  let filePath = null;
+  if(fileColumn){
+    const { data: existing, error: lookupError } = await supabaseClient
+      .from(type).select(fileColumn).eq('id', id).maybeSingle();
+    if(lookupError){ showToast(lookupError.message || 'Could not find item'); return; }
+    filePath = existing?.[fileColumn] || null;
+  }
+
   const { error } = await supabaseClient
     .from(type)
     .delete()
@@ -1058,8 +1077,14 @@ async function removeItem(type, id){
 
   if(error){
     console.error(error);
-    showToast('Delete failed');
+    showToast(error.message || 'Delete failed');
     return;
+  }
+
+  if(filePath){
+    const { error: storageError } = await supabaseClient.storage
+      .from(STORAGE_BUCKET).remove([filePath]);
+    if(storageError) console.warn('Storage cleanup failed:', storageError);
   }
 
   showToast('Deleted successfully');
@@ -1098,7 +1123,7 @@ const modalMeta = {
       {key:'title',displayLabel:'Album / Event Name',kind:'text',required:true,placeholder:'Example: Workshop Highlights',group:'left'},
       {key:'date',displayLabel:'Photo Date',kind:'date',required:true,group:'left'},
       {key:'description',displayLabel:'Description (Optional)',kind:'textarea',required:false,placeholder:'Add a short description...',group:'left'},
-      {key:'photo',displayLabel:'Photo Upload',kind:'file',required:true,accept:'image/*',hint:'PNG, JPG, JPEG (Max. 5MB)',group:'right'},
+      {key:'photo',displayLabel:'Photo Upload',kind:'file',required:true,multiple:true,accept:'image/*',hint:'Select multiple PNG/JPG images (Max. 20MB each)',group:'right'},
     ]
   },
   achievement:{
@@ -1108,7 +1133,7 @@ const modalMeta = {
       {key:'title',displayLabel:'Title',kind:'text',required:true,placeholder:'Example: SAE Aero Design 2024',group:'left'},
       {key:'date',displayLabel:'Date',kind:'date',required:true,group:'left'},
       {key:'desc',displayLabel:'Description',kind:'textarea',required:true,placeholder:'Describe the achievement...',group:'left'},
-      {key:'photo',displayLabel:'Photo (Optional)',kind:'file',required:false,accept:'image/*',hint:'PNG, JPG, JPEG (Max. 5MB)',group:'right'},
+      {key:'photo',displayLabel:'Achievement Photo (Optional)',kind:'file',required:false,accept:'image/*',hint:'PNG, JPG, JPEG (Max. 20MB)',group:'right'},
     ]
   },
   resource:{
@@ -1179,7 +1204,7 @@ function renderDropzone(f, existingFile){
   return `<div class="${wrapClass}" data-field="${f.key}">
     <label>${f.displayLabel}${req}</label>
     <div class="${dzClass}" id="dz-${f.key}">
-      <input type="file" id="dzi-${f.key}" accept="${f.accept||''}" style="display:none">
+      <input type="file" id="dzi-${f.key}" accept="${f.accept||''}" ${f.multiple ? 'multiple' : ''} style="display:none">
       <div class="dz-inner" id="dzinner-${f.key}">${inner}</div>
     </div>
   </div>`;
@@ -1272,13 +1297,35 @@ function initDropzone(key){
   const input = document.getElementById('dzi-'+key);
   if(!dz || !input) return;
   dz.addEventListener('click', ()=> input.click());
-  input.addEventListener('change', e=>{ if(e.target.files[0]) handleFile(key, e.target.files[0]); });
+  input.addEventListener('change', e=>{ if(e.target.files.length) handleFiles(key, Array.from(e.target.files)); });
   dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('dragover'); });
   dz.addEventListener('dragleave', ()=> dz.classList.remove('dragover'));
   dz.addEventListener('drop', e=>{
     e.preventDefault(); dz.classList.remove('dragover');
-    if(e.dataTransfer.files[0]) handleFile(key, e.dataTransfer.files[0]);
+    if(e.dataTransfer.files.length) handleFiles(key, Array.from(e.dataTransfer.files));
   });
+}
+
+function handleFiles(key, files){
+    if(files.length > 1){
+        Promise.all(files.map(readUploadFile)).then(items => {
+            modalFiles[key] = items;
+            const dzInner = document.getElementById('dzinner-' + key);
+            if(dzInner) dzInner.innerHTML = `${fileIconSvg()}<div class="dz-filename">${items.length} photos selected</div><button type="button" style="position:static;margin-top:6px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer" onclick="event.stopPropagation();clearDropzone('${key}')">Remove</button>`;
+        }).catch(error => showToast(error.message));
+        return;
+    }
+    if(files[0]) handleFile(key, files[0]);
+}
+
+function readUploadFile(file){
+    return new Promise((resolve, reject) => {
+        if(file.size > 20 * 1024 * 1024){ reject(new Error(`${file.name} is larger than 20MB`)); return; }
+        const reader = new FileReader();
+        reader.onload = () => resolve({name:file.name,type:file.type,dataUrl:reader.result});
+        reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+        reader.readAsDataURL(file);
+    });
 }
 
 function handleFile(key, file){
@@ -1510,6 +1557,24 @@ async function saveModal(){
             }
 
             if(result.error) throw result.error;
+
+            // Keep the notice board capped at 10 records, ordered by notice date.
+            const { data: noticeRows, error: noticeLoadError } = await supabaseClient
+                .from('notices')
+                .select('id,date')
+                .order('date', { ascending: false })
+                .order('id', { ascending: false });
+
+            if(noticeLoadError) throw noticeLoadError;
+
+            const expiredNoticeIds = (noticeRows || []).slice(10).map(notice => notice.id);
+            if(expiredNoticeIds.length){
+                const { error: noticeDeleteError } = await supabaseClient
+                    .from('notices')
+                    .delete()
+                    .in('id', expiredNoticeIds);
+                if(noticeDeleteError) throw noticeDeleteError;
+            }
         }
 
 
@@ -1518,53 +1583,25 @@ async function saveModal(){
         ========================= */
 
         else if(kind === 'photo'){
-
-            let uploaded = null;
-
-            if(payload.photo && payload.photo.dataUrl){
-
-                uploaded = await uploadToStorage(
-                    payload.photo,
-                    'gallery'
-                );
-            }
-
-            const galleryData = {
-                title: payload.title,
-                date: payload.date,
-                description: payload.description || ''
-            };
-
-            if(uploaded){
-
-                galleryData.photo_url = uploaded.url;
-                galleryData.photo_path = uploaded.path;
-            }
-
-            let result;
+            const selectedPhotos = Array.isArray(payload.photo) ? payload.photo : (payload.photo ? [payload.photo] : []);
+            if(!selectedPhotos.length){ showToast('Please select a photo'); return; }
+            const baseData = { title: payload.title, date: payload.date, description: payload.description || '' };
 
             if(editId !== null){
-
-                result = await supabaseClient
-                    .from('gallery')
-                    .update(galleryData)
-                    .eq('id', editId);
-
+                const uploaded = selectedPhotos[0].dataUrl ? await uploadToStorage(selectedPhotos[0], 'gallery') : null;
+                if(uploaded){ baseData.photo_url = uploaded.url; baseData.photo_path = uploaded.path; }
+                const result = await supabaseClient.from('gallery').update(baseData).eq('id', editId);
+                if(result.error) throw result.error;
             }else{
-
-                if(!uploaded){
-
-                    showToast('Please select a photo');
-
-                    return;
+                const galleryRows = [];
+                for(const photo of selectedPhotos){
+                    const uploaded = await uploadToStorage(photo, 'gallery');
+                    if(!uploaded) throw new Error(`Could not upload ${photo.name}`);
+                    galleryRows.push({...baseData, photo_url: uploaded.url, photo_path: uploaded.path});
                 }
-
-                result = await supabaseClient
-                    .from('gallery')
-                    .insert([galleryData]);
+                const result = await supabaseClient.from('gallery').insert(galleryRows);
+                if(result.error) throw result.error;
             }
-
-            if(result.error) throw result.error;
         }
 
 
@@ -1822,7 +1859,25 @@ async function loadAllData(){
 
     renderAll();
 }
-loadAllData();
+async function initializeDashboard(){
+  const session = await checkLogin();
+  if(!session) return;
+  showAdmin(session);
+  await loadAllData();
+}
+initializeDashboard();
+
+function addDashboardRipple(event){
+  const target = event.target.closest('button');
+  if(!target || target.disabled) return;
+  const rect = target.getBoundingClientRect(), ripple = document.createElement('span');
+  const size = Math.max(rect.width, rect.height);
+  ripple.className='ripple'; ripple.style.width=ripple.style.height=size+'px';
+  const point=event.touches?.[0]||event;
+  ripple.style.left=(point.clientX-rect.left-size/2)+'px'; ripple.style.top=(point.clientY-rect.top-size/2)+'px';
+  target.appendChild(ripple); setTimeout(()=>ripple.remove(),650);
+}
+document.addEventListener('pointerdown', addDashboardRipple, {passive:true});
 </script>
 </body>
 </html>
