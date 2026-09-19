@@ -897,6 +897,7 @@ function renderGallery(){
                         removeItem('gallery',${g.id})">
                         ✕
                     </button>
+                    <button onclick="event.stopPropagation();openModal('photo',${g.id})">Edit</button>
 
                 </div>
 
@@ -1076,7 +1077,6 @@ const modalMeta = {
       {key:'date',displayLabel:'Event Date',kind:'date',required:true,group:'leftrow'},
       {key:'time',displayLabel:'Event Time',kind:'text',required:true,placeholder:'Example: 10:00 AM',group:'leftrow'},
       {key:'location',displayLabel:'Location',kind:'text',required:true,placeholder:'Example: Seminar Hall',group:'left'},
-      {key:'type',displayLabel:'Event Type',kind:'select',options:['Upcoming','Ongoing','Past'],required:true,group:'left'},
       {key:'photo',displayLabel:'Event Photo',kind:'file',required:false,accept:'image/*',hint:'PNG, JPG, JPEG (Max. 5MB)',group:'right'},
       {key:'description',displayLabel:'Description',kind:'textarea',required:false,placeholder:'Describe the event...',group:'full'},
     ]
@@ -1095,7 +1095,7 @@ const modalMeta = {
     title:'Photo', subtitle:'Upload a new photo to the gallery.', icon:'🖼️', iconBg:'#dcfce7',
     store:'gallery', wide:true, addLabel:'Upload Photo',
     fields:[
-      {key:'title',displayLabel:'Title / Caption',kind:'text',required:true,placeholder:'Example: Workshop Highlights',group:'left'},
+      {key:'title',displayLabel:'Album / Event Name',kind:'text',required:true,placeholder:'Example: Workshop Highlights',group:'left'},
       {key:'date',displayLabel:'Photo Date',kind:'date',required:true,group:'left'},
       {key:'description',displayLabel:'Description (Optional)',kind:'textarea',required:false,placeholder:'Add a short description...',group:'left'},
       {key:'photo',displayLabel:'Photo Upload',kind:'file',required:true,accept:'image/*',hint:'PNG, JPG, JPEG (Max. 5MB)',group:'right'},
@@ -1117,7 +1117,7 @@ const modalMeta = {
     fields:[
       {key:'title',displayLabel:'Title',kind:'text',required:true,placeholder:'Example: Aerodynamics Notes',group:'plainleft'},
       {key:'description',displayLabel:'Description (Optional)',kind:'textarea',required:false,placeholder:'Add a short description...',group:'plainright'},
-      {key:'type',displayLabel:'Type',kind:'select',options:['PDF','ZIP','DOC','PPT'],required:true,group:'plainleft'},
+      {key:'type',displayLabel:'Category',kind:'select',options:['Results','Study Materials'],required:true,group:'plainleft'},
       {key:'date',displayLabel:'Date',kind:'date',required:true,group:'plainright'},
       {key:'file',displayLabel:'Upload File',kind:'file',required:true,accept:'.pdf,.zip,.doc,.docx,.ppt,.pptx',hint:'PDF, ZIP, DOC, PPT (Max. 20MB)',group:'fullfile'},
     ]
@@ -1453,7 +1453,7 @@ async function saveModal(){
               event_date: payload.date,
               event_time: payload.time,
               location: payload.location,
-              type: String(payload.type || 'Upcoming').toLowerCase()
+              type: 'upcoming'
           };
           
           if(uploaded){
