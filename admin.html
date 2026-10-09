@@ -345,31 +345,58 @@
   .error-msg.show{ display:block; }
 
   @media (max-width: 860px){
-    html,body{ overflow:auto; }
+    html,body{ overflow-x:hidden; overflow-y:auto; }
     .page{ flex-direction:column; height:auto; min-height:100vh; }
     .left{
       width:100%;
       height:auto;
       clip-path:none;
-      padding:32px 24px;
+      padding:28px 20px 24px;
+      display:block;
     }
     .plane-silhouette{ display:none; }
     .brand-top{
-    position:relative;
-    top:auto;
-    left:auto;
-    transform:none;
-    width:100%;
-    text-align:center;
+      position:relative;
+      top:auto;
+      left:auto;
+      transform:none;
+      width:100%;
+      text-align:center;
     }
-    
+    .logo-circle{ margin-bottom:14px; }
+    .brand-name{ font-size:32px; }
+    .brand-divider{ margin:10px auto; }
+    .brand-sub,
+    .brand-sub2{ font-size:11px; letter-spacing:2px; line-height:1.5; }
     .brand-mid{
-        margin-top:28px;
-        text-align:left;
+      margin:24px auto 0;
+      text-align:center;
+      max-width:340px;
     }
-    .right{ height:auto; padding:28px 16px 48px; }
-    .card{ padding:28px 22px 24px; }
+    .tagline{ font-size:17px; margin-bottom:10px; }
+    .desc{ font-size:13px; line-height:1.55; }
+    .footer-note{ display:block; margin-top:26px; text-align:center; }
+    .right{ width:100%; height:auto; padding:20px 14px 36px; }
+    .card{ width:100%; max-width:440px; padding:26px 20px 24px; }
+    .card h1{ font-size:24px; }
   }
+
+  @media (max-width: 380px){
+    .left{ padding-left:16px; padding-right:16px; }
+    .right{ padding-left:10px; padding-right:10px; }
+    .card{ padding-left:16px; padding-right:16px; }
+    .brand-sub,
+    .brand-sub2{ letter-spacing:1.5px; }
+  }
+
+  /* Smooth, restrained motion */
+  @keyframes aesafadeup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .left{animation:aesafadeup .8s cubic-bezier(.22,1,.36,1) both}
+  .card{animation:aesafadeup .8s .08s cubic-bezier(.22,1,.36,1) both}
+  .logo-circle,.btn-login,.input-wrap{transition:transform .25s ease,box-shadow .25s ease}
+  .logo-circle:hover{transform:scale(1.04)}
+  .input-wrap:focus-within{transform:translateY(-1px);box-shadow:0 8px 22px rgba(41,82,232,.12)}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
   :focus-visible{ outline:2px solid var(--blue-bright); outline-offset:2px; }
 </style>
@@ -510,9 +537,6 @@ const supabaseClient = window.supabase.createClient(
     e.preventDefault();
     clearError();
 
-    // Supabase treats email addresses as case-insensitive. Normalizing here
-    // avoids a valid account being rejected because of capital letters or
-    // accidental spaces in the address.
     const email = emailInput.value.trim().toLowerCase();
     const password = passwordInput.value;
 
